@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>root@sivnsh7 — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #000000;
+    --bg2: #050505;
+    --bg3: #0a0a0a;
+    --border: #1a1a1a;
+    --green: #39ff14;
+    --green2: #00e600;
+    --green-dim: #1a4d00;
+    --green-glow: rgba(57,255,20,0.15);
+    --white: #e8e8e8;
+    --gray: #555;
+    --gray2: #888;
+    --red: #ff3333;
+    --yellow: #ffcc00;
+    --blue: #4af;
+    --purple: #c792ea;
+    --font: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* ---- SCROLLBAR ---- */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+  /* ---- CUSTOM CURSOR ---- */
+  .cursor {
+    position: fixed;
+    width: 20px; height: 20px;
+    border: 1px solid var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10001;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ---- TERMINAL WINDOW ---- */
+  .term-window {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(57,255,20,0.05), 0 0 1px rgba(57,255,20,0.2);
+  }
+
+  .term-titlebar {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .term-dots { display: flex; gap: 6px; }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .dot.red { background: #ff5f56; box-shadow: 0 0 6px #ff5f56; }
+  .dot.yellow { background: #ffbd2e; box-shadow: 0 0 6px #ffbd2e; }
+  .dot.green { background: #27c93f; box-shadow: 0 0 6px #27c93f; }
+
+  .term-title {
+    flex: 1;
+    text-align: center;
+    color: var(--gray2);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .term-body {
+    padding: 18px 20px;
+  }
+
+  /* ---- PROMPT ---- */
+  .prompt-line { display: flex; align-items: baseline; gap: 0; flex-wrap: wrap; }
+  .p-user { color: var(--red); font-weight: 700; }
+  .p-at { color: var(--white); }
+  .p-host { color: var(--green); font-weight: 700; }
+  .p-colon { color: var(--white); }
+  .p-path { color: var(--blue); }
+  .p-hash { color: var(--white); margin-right: 6px; }
+  .p-cmd { color: var(--white); }
+
+  .output { color: var(--gray2); padding-left: 0; margin-top: 4px; }
+  .output.green { color: var(--green); }
+  .output.red { color: var(--red); }
+  .output.yellow { color: var(--yellow); }
+  .output.white { color: var(--white); }
+
+  .line-gap { height: 12px; }
+
+  /* Blinking cursor */
+  .blink {
+    display: inline-block;
+    width: 8px; height: 16px;
+    background: var(--green);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    box-shadow: 0 0 8px var(--green);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---- LAYOUT ---- */
+  .page { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+
+  /* ---- NAVBAR ---- */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(0,0,0,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 0 20px;
+  }
+
+  .nav-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 44px;
+  }
+
+  .nav-brand {
+    color: var(--green); font-weight: 700;
+    font-size: 13px; letter-spacing: 1px;
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--red); }
+
+  .nav-links { display: flex; gap: 20px; list-style: none; }
+  .nav-links a {
+    color: var(--gray2); text-decoration: none;
+    font-size: 12px; letter-spacing: 1px;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--green-dim);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links a:hover::before { color: var(--green); }
+
+  /* ---- HERO ---- */
+  #hero { padding: 60px 0 40px; }
+
+  .hero-prompt { margin-bottom: 30px; }
+
+  .ascii-art {
+    color: var(--green);
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: pre;
+    text-shadow: 0 0 10px rgba(57,255,20,0.5);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .hero-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .info-row { display: flex; gap: 8px; }
+  .info-key { color: var(--green); min-width: 100px; }
+  .info-val { color: var(--white); }
+  .info-val span { color: var(--yellow); }
+
+  /* ---- SECTION ---- */
+  section { padding: 40px 0; border-top: 1px solid var(--border); }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .section-cmd {
+    color: var(--green); font-weight: 700;
+    font-size: 13px; letter-spacing: 1px;
+  }
+  .section-title { color: var(--white); font-size: 13px; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ---- SKILLS ---- */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .skill-category {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .skill-category:hover {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 20px rgba(57,255,20,0.06);
+  }
+
+  .skill-cat-name {
+    color: var(--green); font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .skill-item { color: var(--gray2); font-size: 13px; margin: 4px 0; }
+  .skill-item::before { content: '├─ '; color: var(--green-dim); }
+  .skill-item:last-child::before { content: '└─ '; color: var(--green-dim); }
+
+  /* ---- SKILL BARS ---- */
+  .skill-bar-wrap { margin: 6px 0; }
+  .skill-bar-label {
+    display: flex; justify-content: space-between;
+    color: var(--gray2); font-size: 12px; margin-bottom: 4px;
+  }
+  .skill-bar-label span:last-child { color: var(--green); }
+  .skill-bar-bg {
+    height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%; background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ---- PROJECTS ---- */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 14px;
+  }
+
+  .project-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card:hover {
+    border-color: var(--green-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(57,255,20,0.07);
+  }
+
+  .project-tag {
+    display: inline-block;
+    background: var(--green-dim);
+    color: var(--green);
+    font-size: 10px; letter-spacing: 1px;
+    padding: 2px 8px; border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  .project-name {
+    color: var(--white); font-weight: 700;
+    font-size: 14px; margin-bottom: 6px;
+  }
+
+  .project-desc { color: var(--gray2); font-size: 12px; line-height: 1.6; }
+
+  .project-tech {
+    margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .tech-badge {
+    font-size: 10px; padding: 2px 7px;
+    border: 1px solid var(--border);
+    color: var(--gray2); border-radius: 2px;
+    background: var(--bg);
+  }
+
+  .project-links {
+    margin-top: 12px; display: flex; gap: 12px;
+  }
+  .project-link {
+    color: var(--green); font-size: 11px;
+    text-decoration: none; letter-spacing: 1px;
+  }
+  .project-link:hover { text-decoration: underline; }
+  .project-link::before { content: '['; color: var(--gray); }
+  .project-link::after { content: ']'; color: var(--gray); }
+
+  /* ---- EXPERIENCE ---- */
+  .exp-item {
+    border-left: 1px solid var(--border);
+    padding-left: 18px; margin-bottom: 24px;
+    position: relative;
+  }
+  .exp-item::before {
+    content: '●';
+    position: absolute; left: -7px; top: 0;
+    color: var(--green); font-size: 10px;
+    background: var(--bg); padding: 2px 0;
+  }
+  .exp-date { color: var(--green); font-size: 11px; letter-spacing: 1px; }
+  .exp-role { color: var(--white); font-size: 14px; font-weight: 700; margin: 4px 0; }
+  .exp-company { color: var(--gray2); font-size: 12px; }
+  .exp-desc { color: var(--gray2); font-size: 12px; margin-top: 8px; line-height: 1.7; }
+
+  /* ---- CONTACT ---- */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .contact-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 4px; padding: 12px 16px;
+    text-decoration: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .contact-item:hover {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 20px rgba(57,255,20,0.06);
+  }
+  .contact-icon { color: var(--green); font-size: 16px; width: 20px; text-align: center; }
+  .contact-label { color: var(--gray2); font-size: 11px; }
+  .contact-val { color: var(--white); font-size: 12px; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 30px 0 40px;
+    text-align: center;
+    color: var(--gray);
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  footer span { color: var(--green); }
+
+  /* ---- 3D TILT EFFECT ---- */
+  .tilt-card { transform-style: preserve-3d; transition: transform 0.15s ease; }
+
+  /* ---- GLITCH TEXT ---- */
+  .glitch {
+    position: relative;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--red);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  }
+  .glitch::after {
+    color: var(--blue);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+  }
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: none; opacity: 0; }
+    92% { transform: translate(-2px, 0); opacity: 0.8; }
+    94% { transform: translate(2px, 0); opacity: 0.8; }
+    96% { transform: none; opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%, 93%, 100% { transform: none; opacity: 0; }
+    95% { transform: translate(2px, 0); opacity: 0.8; }
+    97% { transform: translate(-2px, 0); opacity: 0.8; }
+    99% { transform: none; opacity: 0; }
+  }
+
+  /* ---- PARTICLES ---- */
+  #particles {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ---- FADE IN ANIMATION ---- */
+  /* Visible by default — JS progressively enhances this */
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .js-loaded .fade-in {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .js-loaded .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---- TYPE ANIMATION ---- */
+  .typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid transparent;
+    width: 0;
+    animation: typing 2s steps(40) forwards;
+  }
+  @keyframes typing {
+    to { width: 100%; }
+  }
+
+  /* ---- MOBILE ---- */
+  @media (max-width: 600px) {
+    .hero-info { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .ascii-art { font-size: 7px; }
+    nav .nav-links { gap: 12px; }
+    nav .nav-links a { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="#hero"><span>root</span>@sivnsh7</a>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#experience">exp</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page">
+  <section id="hero">
+    <div class="term-window fade-in">
+      <div class="term-titlebar">
+        <div class="term-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <div class="term-title">kali@sivnsh7: ~/portfolio — bash</div>
+      </div>
+      <div class="term-body">
+        <pre class="ascii-art">
+ ███████╗██╗██╗   ██╗███╗   ██╗███████╗██╗  ██╗███████╗
+ ██╔════╝██║██║   ██║████╗  ██║██╔════╝██║  ██║╚════██║
+ ███████╗██║██║   ██║██╔██╗ ██║███████╗███████║    ██╔╝
+ ╚════██║██║╚██╗ ██╔╝██║╚██╗██║╚════██║██╔══██║   ██╔╝ 
+ ███████║██║ ╚████╔╝ ██║ ╚████║███████║██║  ██║   ██║  
+ ╚══════╝╚═╝  ╚═══╝  ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝  </pre>
+
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
+          <span class="p-cmd">whoami</span>
+        </div>
+        <div class="output white" style="margin-top:8px;font-size:22px;font-weight:700;">
+          <span class="glitch" data-text="Sivnsh">Sivnsh</span>
+        </div>
+
+        <div class="line-gap"></div>
+
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
+          <span class="p-cmd">cat /etc/profile</span>
+        </div>
+
+        <div class="hero-info" style="margin-top:14px;">
+          <div>
+            <div class="info-row"><span class="info-key">NAME</span><span class="info-val"><span>sivnsh7</span></span></div>
+
+            <div class="info-row"><span class="info-key">ROLE</span><span class="info-val">Developer &amp; Security Enthusiast</span></div>
+            <div class="info-row"><span class="info-key">OS</span><span class="info-val">Kali Linux Rolling</span></div>
+          </div>
+          <div>
+            <div class="info-row"><span class="info-key">SHELL</span><span class="info-val">/bin/bash</span></div>
+            <div class="info-row"><span class="info-key">LOCATION</span><span class="info-val">India</span></div>
+            <div class="info-row"><span class="info-key">STATUS</span><span class="info-val" style="color:var(--green);">● ONLINE</span></div>
+            <div class="info-row"><span class="info-key">CLEARANCE</span><span class="info-val"><span>ROOT</span></span></div>
+          </div>
+        </div>
+
+        <div class="line-gap"></div>
+
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
+          <span class="blink"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="fade-in">
+    <div class="section-header">
+      <span class="section-cmd">$</span>
+      <span class="section-title">cat about.txt</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="term-window">
+      <div class="term-titlebar">
+        <div class="term-dots">
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        </div>
+        <div class="term-title">about.txt</div>
+      </div>
+      <div class="term-body">
+        <div class="output" style="color:var(--gray2);line-height:1.9;font-size:13px;">
+          <span style="color:var(--green);"># /home/sivnsh7/.profile</span><br><br>
+          I'm a student, developer, and security enthusiast based in India. I enjoy
+          breaking things apart to understand how they work — whether that's networks,
+          systems, or financial models.<br><br>
+          
+          <span style="color:var(--green);">Interests:</span> Kali Linux · Pentesting · Virtual Machines · Finance · Web Dev · Automation<br>
+          <span style="color:var(--green);">Learning:</span> OSCP prep · Web App Security · Python scripting · Networking
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="fade-in">
+    <div class="section-header">
+      <span class="section-cmd">$</span>
+      <span class="section-title">ls -la skills/</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid" style="margin-bottom:20px;">
+      <div class="skill-category tilt-card">
+        <div class="skill-cat-name">// security</div>
+        <div class="skill-item">Kali Linux</div>
+        <div class="skill-item">Nmap / Netcat</div>
+        <div class="skill-item">Burp Suite</div>
+        <div class="skill-item">Metasploit</div>
+        <div class="skill-item">Wireshark</div>
+      
+      </div>
+      <div class="skill-category tilt-card">
+        <div class="skill-cat-name">// systems</div>
+        <div class="skill-item">Linux Administration</div>
+        <div class="skill-item">VirtualBox / VMware</div>
+        <div class="skill-item">Networking Basics</div>
+        <div class="skill-item">Personal VPN Setups</div>
+        <div class="skill-item">SSH / SCP</div>
+      
+      </div>
+    </div>
+
+    <!-- Skill bars -->
+    <div class="term-window">
+      <div class="term-titlebar">
+        <div class="term-dots">
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        </div>
+        <div class="term-title">skill_levels.sh</div>
+      </div>
+      <div class="term-body">
+        <div id="skill-bars">
+          <div class="skill-bar-wrap" data-level="85">
+            <div class="skill-bar-label"><span>Linux / Kali</span><span>85%</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+          </div>
+          <div class="skill-bar-wrap" data-level="80">
+            <div class="skill-bar-label"><span>Layered Network Encapsulation</span><span>80%</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+          </div>
+          <div class="skill-bar-wrap" data-level="75">
+            <div class="skill-bar-label"><span>Web Security</span><span>75%</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+          </div>
+          <div class="skill-bar-wrap" data-level="70">
+            <div class="skill-bar-label"><span>Secure Remote Access Architecture</span><span>70%</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+          </div>
+          <div class="skill-bar-wrap" data-level="65">
+            <div class="skill-bar-label"><span>Networking</span><span>65%</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="fade-in">
+    <div class="section-header">
+      <span class="section-cmd">$</span>
+      <span class="section-title">find ./projects -type f -name "*.sh"</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-card tilt-card">
+        <div class="project-tag">SECURITY</div>
+        <div class="project-name">Network Scanner</div>
+        <div class="project-desc">Custom Python + Nmap wrapper for automated network recon and vulnerability mapping on local networks.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Python</span>
+          <span class="tech-badge">Nmap</span>
+          <span class="tech-badge">Bash</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#">GitHub</a>
+          <a class="project-link" href="#">Demo</a>
+        </div>
+      </div>
+
+      <div class="project-card tilt-card">
+        <div class="project-tag">AUTOMATION</div>
+        <div class="project-name">VM Lab Setup Script</div>
+        <div class="project-desc">Bash script to auto-configure Kali Linux VMs with essential pentesting tools, aliases, and ZSH config.</div>
+        <div class="project-tech">
+          <span class="tech-badge">Bash</span>
+          <span class="tech-badge">Kali</span>
+          <span class="tech-badge">VirtualBox</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#">GitHub</a>
+        </div>
+      </div>
+
+
+      <div class="project-card tilt-card" style="border-style:dashed; display:flex; align-items:center; justify-content:center; min-height:160px;">
+        <div style="text-align:center; color:var(--gray);">
+          <div style="font-size:24px; margin-bottom:8px;">+</div>
+          <div style="font-size:12px;">more coming soon...</div>
+          <div style="font-size:11px; margin-top:4px; color:var(--green-dim);">[ currently in /dev ]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="fade-in">
+    <div class="section-header">
+      <span class="section-cmd">$</span>
+      <span class="section-title">cat /var/log/experience.log</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">2026 — PRESENT</div>
+      <div class="exp-role">Independent Security Researcher</div>
+      <div class="exp-company">Self-Directed / Home Lab</div>
+      <div class="exp-desc">Running Kali Linux in VM environments for hands-on pentesting practice. Studying network protocols, web vulnerabilities (OWASP Top 10), and CTF challenges.</div>
+    </div>
+
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="fade-in">
+    <div class="section-header">
+      <span class="section-cmd">$</span>
+      <span class="section-title">netstat -connect contact/</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="contact-grid">
+      <a class="contact-item" href="https://github.com/sivnsh7" target="_blank">
+        <div class="contact-icon">⌘</div>
+        <div>
+          <div class="contact-label">GITHUB</div>
+          <div class="contact-val">github.com/sivnsh7</div>
+        </div>
+      </a>
+      <a class="contact-item" href="mailto:sivnsh7@gmail.com">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div class="contact-label">EMAIL</div>
+          <div class="contact-val">sivnsh7@gmail.com</div>
+        </div>
+      </a>
+      <a class="contact-item" href="https://t.me/sivnsh" target="_blank">
+        <div class="contact-icon">◈</div>
+        <div>
+          <div class="contact-label">TELEGRAM</div>
+          <div class="contact-val">telegram.com/in/sivnsh</div>
+        </div>
+      </a>
+      <a class="contact-item" href="https://www.instagram.com/sivnsh7.in" target="_blank">
+        <div class="contact-icon">◉</div>
+        <div>
+          <div class="contact-label">INSTAGRAM</div>
+          <div class="contact-val">@sivnsh7.in</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Terminal contact form hint -->
+    <div class="term-window" style="margin-top:20px;">
+      <div class="term-titlebar">
+        <div class="term-dots">
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+        </div>
+        <div class="term-title">message.sh</div>
+      </div>
+      <div class="term-body">
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
+          <span class="p-cmd">echo "Want to collaborate or just talk tech?"</span>
+        </div>
+        <div class="output green" style="margin-top:6px;">Want to collaborate or just talk tech?</div>
+        <div class="line-gap"></div>
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
+          <span class="p-cmd">ping sivnsh7.in -c 1</span>
+        </div>
+        <div class="output" style="margin-top:6px;color:var(--gray2);">
+          PING sivnsh7.in: 56 bytes of data<br>
+          64 bytes from sivnsh7.in: icmp_seq=0 ttl=64 time=<span style="color:var(--green);">1.337 ms</span><br>
+          <br>
+          <span style="color:var(--green);">1 packets transmitted, 1 received, 0% packet loss</span>
+        </div>
+        <div class="line-gap"></div>
+        <div class="prompt-line">
+          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
+          <span class="blink"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>built with <span>♥</span> by <span>root@sivnsh7</span> — no frameworks harmed</div>
+    <div style="margin-top:6px;color:var(--green-dim);">[ pure html · pure css · pure js ]</div>
+  </footer>
+</div>
+</div>
+
+<script>
+// ---- CURSOR ----
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursorDot');
+let mx = 0, my = 0, cx = 0, cy = 0;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+function animCursor() {
+  cx += (mx - cx) * 0.12;
+  cy += (my - cy) * 0.12;
+  cursor.style.left = cx + 'px';
+  cursor.style.top = cy + 'px';
+  cursorDot.style.left = mx + 'px';
+  cursorDot.style.top = my + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+document.querySelectorAll('a, button, .project-card, .skill-category').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1.8)'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
+});
+
+// ---- PARTICLES ----
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 1.2 + 0.2,
+    vx: (Math.random() - 0.5) * 0.2,
+    vy: (Math.random() - 0.5) * 0.2,
+    a: Math.random() * 0.4 + 0.1
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(57,255,20,${p.a})`;
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ---- FADE IN ON SCROLL ----
+// Mark body so CSS can hide elements (progressive enhancement)
+document.body.classList.add('js-loaded');
+
+const fadeEls = document.querySelectorAll('.fade-in');
+
+// Fallback: if IntersectionObserver fails or page is local file, show everything after 300ms
+const fallbackTimer = setTimeout(() => {
+  fadeEls.forEach(el => el.classList.add('visible'));
+}, 300);
+
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+  fadeEls.forEach(el => observer.observe(el));
+
+  // Hero always visible immediately
+  const hero = document.querySelector('#hero');
+  if (hero) { hero.classList.add('visible'); clearTimeout(fallbackTimer); }
+
+  // Also clear fallback if first elements become visible quickly
+  setTimeout(() => clearTimeout(fallbackTimer), 100);
+} else {
+  // No IntersectionObserver support — show everything
+  fadeEls.forEach(el => el.classList.add('visible'));
+  clearTimeout(fallbackTimer);
+}
+
+// ---- SKILL BARS ----
+const barObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-bar-wrap').forEach(wrap => {
+        const level = wrap.dataset.level;
+        wrap.querySelector('.skill-bar-fill').style.width = level + '%';
+      });
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const skillSection = document.getElementById('skill-bars');
+if (skillSection) barObserver.observe(skillSection);
+
+// ---- 3D TILT ----
+document.querySelectorAll('.tilt-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    card.style.transform = `perspective(600px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateZ(4px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(600px) rotateX(0) rotateY(0) translateZ(0)';
+  });
+});
+
+// ---- TYPING SIMULATION ----
+// Random glitch effect on title occasionally
+setInterval(() => {
+  const title = document.querySelector('.term-title');
+  if (title && Math.random() < 0.1) {
+    const orig = title.textContent;
+    title.style.color = 'var(--red)';
+    setTimeout(() => { title.style.color = ''; }, 80);
+  }
+}, 3000);
+
+// ---- NAV ACTIVE HIGHLIGHT ----
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) cur = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--green)' : '';
+  });
+});
+</script>
+</body>
+</html>
