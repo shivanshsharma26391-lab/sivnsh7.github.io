@@ -2,963 +2,1201 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>root@sivnsh7 — Portfolio</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #000000;
-    --bg2: #050505;
-    --bg3: #0a0a0a;
-    --border: #1a1a1a;
-    --green: #39ff14;
-    --green2: #00e600;
-    --green-dim: #1a4d00;
-    --green-glow: rgba(57,255,20,0.15);
-    --white: #e8e8e8;
-    --gray: #555;
-    --gray2: #888;
-    --red: #ff3333;
-    --yellow: #ffcc00;
-    --blue: #4af;
-    --purple: #c792ea;
-    --font: 'JetBrains Mono', 'Share Tech Mono', monospace;
-  }
+:root {
+  --bg:#000000;--bg2:#030303;--bg3:#080808;--bg4:#0d0d0d;
+  --border:#111;--border2:#1a1a1a;
+  --green:#39ff14;--green2:#00e600;--green-dim:#0f3300;--green-glow:rgba(57,255,20,0.15);
+  --green-muted:#1a4d00;--cyan:#00ffd5;--cyan-dim:#003d33;
+  --white:#e0e0e0;--gray:#444;--gray2:#777;--gray3:#999;
+  --red:#ff3333;--red-dim:#330a0a;--yellow:#ffcc00;--blue:#4af;--purple:#c792ea;
+  --orange:#ff8c00;
+  --font:'JetBrains Mono','Fira Code','Share Tech Mono',monospace;
+  --radius:3px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:14px}
+body{background:var(--bg);color:var(--white);font-family:var(--font);line-height:1.6;overflow-x:hidden;cursor:default}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* === SCANLINES === */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,0.03) 1px,rgba(0,0,0,0.03) 2px);pointer-events:none;z-index:9999}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:9998}
 
-  html { scroll-behavior: smooth; }
+/* === SCROLLBAR === */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--green-dim);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--green)}
 
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: var(--font);
-    font-size: 14px;
-    line-height: 1.6;
-    overflow-x: hidden;
-    cursor: default;
-  }
+/* === CURSOR === */
+.cursor{position:fixed;width:22px;height:22px;border:1px solid var(--green);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .15s,height .15s,border-color .15s;mix-blend-mode:screen}
+.cursor.hover{width:44px;height:44px;border-color:var(--cyan)}
+.cursor-dot{position:fixed;width:3px;height:3px;background:var(--green);border-radius:50%;pointer-events:none;z-index:10001;transform:translate(-50%,-50%)}
+.cursor-trail{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9999;opacity:0;transition:opacity .3s}
 
-  /* Scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
+/* ============================
+   BOOT SCREEN - FULL KALI
+   ============================ */
+#boot{position:fixed;inset:0;background:#000;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1;transition:opacity .6s,visibility .6s}
+#boot.done{opacity:0;visibility:hidden;pointer-events:none}
 
-  /* CRT vignette */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
-    pointer-events: none;
-    z-index: 9998;
-  }
+.boot-kali-logo{margin-bottom:24px;position:relative}
+.boot-kali-logo svg{width:80px;height:80px;filter:drop-shadow(0 0 20px rgba(57,255,20,.5));animation:boot-pulse 1.5s ease-in-out infinite alternate}
+@keyframes boot-pulse{0%{filter:drop-shadow(0 0 10px rgba(57,255,20,.3))}100%{filter:drop-shadow(0 0 40px rgba(57,255,20,.8))}}
 
-  /* ---- SCROLLBAR ---- */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--green); }
+.boot-lines{width:min(600px,90vw);font-size:11px;color:var(--gray2);line-height:1.8;max-height:40vh;overflow:hidden}
+.boot-lines .bl{opacity:0;transform:translateX(-5px);transition:opacity .15s,transform .15s}
+.boot-lines .bl.show{opacity:1;transform:none}
+.boot-lines .bl .ok{color:var(--green)}
+.boot-lines .bl .fail{color:var(--red)}
+.boot-lines .bl .warn{color:var(--yellow)}
+.boot-lines .bl .hl{color:var(--cyan)}
 
-  /* ---- CUSTOM CURSOR ---- */
-  .cursor {
-    position: fixed;
-    width: 20px; height: 20px;
-    border: 1px solid var(--green);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    transition: transform 0.05s, opacity 0.2s;
-    mix-blend-mode: screen;
-  }
-  .cursor-dot {
-    position: fixed;
-    width: 4px; height: 4px;
-    background: var(--green);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10001;
-    transform: translate(-50%, -50%);
-  }
+.boot-bar-wrap{width:min(600px,90vw);margin-top:16px}
+.boot-bar-label{font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:4px;display:flex;justify-content:space-between}
+.boot-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.boot-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 8px var(--green);transition:width .2s}
 
-  /* ---- TERMINAL WINDOW ---- */
-  .term-window {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 0 40px rgba(57,255,20,0.05), 0 0 1px rgba(57,255,20,0.2);
-  }
+.boot-access{margin-top:16px;font-size:12px;color:var(--red);opacity:0;transition:opacity .5s;letter-spacing:1px}
+.boot-access.show{opacity:1;animation:access-flash .3s ease 3}
+@keyframes access-flash{50%{opacity:0}}
 
-  .term-titlebar {
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+/* ============================
+   SCROLL PROGRESS
+   ============================ */
+#scroll-prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 6px var(--green);z-index:10002;width:0;transition:width .05s}
 
-  .term-dots { display: flex; gap: 6px; }
-  .dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  .dot.red { background: #ff5f56; box-shadow: 0 0 6px #ff5f56; }
-  .dot.yellow { background: #ffbd2e; box-shadow: 0 0 6px #ffbd2e; }
-  .dot.green { background: #27c93f; box-shadow: 0 0 6px #27c93f; }
+/* ============================
+   EDEX-UI TOP BAR
+   ============================ */
+.edex-topbar{position:sticky;top:0;z-index:200;background:rgba(0,0,0,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);padding:0}
+.edex-topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:stretch;height:38px;font-size:11px}
+.edex-topbar-brand{display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--border);color:var(--green);font-weight:700;letter-spacing:1px;gap:8px;white-space:nowrap}
+.edex-topbar-brand .kali-ico{width:16px;height:16px}
+.edex-topbar-brand .user{color:var(--red)}
+.edex-topbar-nav{display:flex;list-style:none;flex:1}
+.edex-topbar-nav li{display:flex}
+.edex-topbar-nav a{display:flex;align-items:center;padding:0 14px;color:var(--gray2);text-decoration:none;letter-spacing:1px;font-size:10px;text-transform:uppercase;border-right:1px solid var(--border);transition:all .2s;position:relative;white-space:nowrap}
+.edex-topbar-nav a::before{content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:var(--green);transform:scaleX(0);transition:transform .2s}
+.edex-topbar-nav a:hover,.edex-topbar-nav a.active{color:var(--green);background:rgba(57,255,20,.03)}
+.edex-topbar-nav a:hover::before,.edex-topbar-nav a.active::before{transform:scaleX(1)}
+.edex-sys-info{display:flex;align-items:center;gap:14px;padding:0 16px;margin-left:auto;border-left:1px solid var(--border);color:var(--gray2);font-size:10px}
+.edex-sys-info .sys-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.3}}
 
-  .term-title {
-    flex: 1;
-    text-align: center;
-    color: var(--gray2);
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
+/* ============================
+   EDEX-UI SIDE PANELS LAYOUT
+   ============================ */
+.edex-layout{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:200px 1fr 200px;gap:0;min-height:100vh;padding-top:10px}
 
-  .term-body {
-    padding: 18px 20px;
-  }
+/* Side panels */
+.edex-side{border:1px solid var(--border);background:var(--bg2);font-size:10px;padding:0;overflow:hidden}
+.edex-side-header{background:var(--bg3);border-bottom:1px solid var(--border);padding:6px 10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;font-size:9px;display:flex;align-items:center;gap:6px}
+.edex-side-header::before{content:'◆';font-size:6px}
+.edex-side-body{padding:8px 10px}
 
-  /* ---- PROMPT ---- */
-  .prompt-line { display: flex; align-items: baseline; gap: 0; flex-wrap: wrap; }
-  .p-user { color: var(--red); font-weight: 700; }
-  .p-at { color: var(--white); }
-  .p-host { color: var(--green); font-weight: 700; }
-  .p-colon { color: var(--white); }
-  .p-path { color: var(--blue); }
-  .p-hash { color: var(--white); margin-right: 6px; }
-  .p-cmd { color: var(--white); }
+/* Filesystem panel */
+.fs-tree{color:var(--gray2);line-height:1.8}
+.fs-tree .dir{color:var(--blue)}
+.fs-tree .file{color:var(--gray2)}
+.fs-tree .exec{color:var(--green)}
+.fs-tree .indent{padding-left:12px}
+.fs-tree .indent2{padding-left:24px}
 
-  .output { color: var(--gray2); padding-left: 0; margin-top: 4px; }
-  .output.green { color: var(--green); }
-  .output.red { color: var(--red); }
-  .output.yellow { color: var(--yellow); }
-  .output.white { color: var(--white); }
+/* System monitor */
+.sys-monitor-item{margin:8px 0}
+.sys-label{display:flex;justify-content:space-between;color:var(--gray2);font-size:9px;margin-bottom:3px}
+.sys-label span:last-child{color:var(--green)}
+.sys-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.sys-bar-fill{height:100%;border-radius:1px;transition:width 1s ease}
+.sys-bar-fill.cpu{background:var(--green);width:67%;box-shadow:0 0 4px var(--green)}
+.sys-bar-fill.mem{background:var(--cyan);width:45%;box-shadow:0 0 4px var(--cyan)}
+.sys-bar-fill.disk{background:var(--yellow);width:72%;box-shadow:0 0 4px var(--yellow)}
+.sys-bar-fill.net{background:var(--purple);width:33%;box-shadow:0 0 4px var(--purple)}
+.sys-bar-fill.gpu{background:var(--orange);width:58%;box-shadow:0 0 4px var(--orange)}
+.sys-bar-fill.swap{background:var(--red);width:21%;box-shadow:0 0 4px var(--red)}
 
-  .line-gap { height: 12px; }
+.net-activity{margin-top:10px;font-size:9px;color:var(--gray2);line-height:2}
+.net-activity .up{color:var(--green)}
+.net-activity .down{color:var(--cyan)}
 
-  /* Blinking cursor */
-  .blink {
-    display: inline-block;
-    width: 8px; height: 16px;
-    background: var(--green);
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-    box-shadow: 0 0 8px var(--green);
-  }
-  @keyframes blink { 50% { opacity: 0; } }
+/* Processes */
+.proc-list{font-size:9px;color:var(--gray2);line-height:2}
+.proc-list .pid{color:var(--green);width:30px;display:inline-block}
+.proc-list .pname{color:var(--white)}
+.proc-list .pcpu{color:var(--yellow);float:right}
 
-  /* ---- LAYOUT ---- */
-  .page { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+/* Main content area */
+.edex-main{padding:0 16px;overflow-y:auto;min-width:0}
 
-  /* ---- NAVBAR ---- */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(0,0,0,0.95);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-    padding: 0 20px;
-  }
+/* ============================
+   TERMINAL WINDOW
+   ============================ */
+.term{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 0 30px rgba(57,255,20,.03)}
+.term:hover{box-shadow:0 0 50px rgba(57,255,20,.06)}
+.term-bar{background:var(--bg3);border-bottom:1px solid var(--border);padding:6px 12px;display:flex;align-items:center;gap:8px;height:28px}
+.term-dots{display:flex;gap:5px}
+.term-dots span{width:10px;height:10px;border-radius:50%;cursor:pointer;transition:transform .2s}
+.term-dots span:hover{transform:scale(1.3)}
+.term-dots .r{background:#ff5f56;box-shadow:0 0 4px #ff5f56}
+.term-dots .y{background:#ffbd2e;box-shadow:0 0 4px #ffbd2e}
+.term-dots .g{background:#27c93f;box-shadow:0 0 4px #27c93f}
+.term-ttl{flex:1;text-align:center;color:var(--gray);font-size:10px;letter-spacing:1px}
+.term-bd{padding:14px 16px;font-size:12px}
 
-  .nav-inner {
-    max-width: 900px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 44px;
-  }
+/* Prompt */
+.ps1{display:flex;align-items:baseline;flex-wrap:wrap;gap:0}
+.ps1 .u{color:var(--red);font-weight:700}
+.ps1 .at{color:var(--white)}
+.ps1 .h{color:var(--green);font-weight:700}
+.ps1 .c{color:var(--white)}
+.ps1 .d{color:var(--blue)}
+.ps1 .ha{color:var(--white);margin-right:6px}
+.ps1 .cmd{color:var(--white)}
 
-  .nav-brand {
-    color: var(--green); font-weight: 700;
-    font-size: 13px; letter-spacing: 1px;
-    text-decoration: none;
-  }
-  .nav-brand span { color: var(--red); }
+.out{color:var(--gray2);margin-top:4px;font-size:12px;line-height:1.7}
+.out.g{color:var(--green)}.out.r{color:var(--red)}.out.y{color:var(--yellow)}.out.w{color:var(--white)}.out.cy{color:var(--cyan)}
 
-  .nav-links { display: flex; gap: 20px; list-style: none; }
-  .nav-links a {
-    color: var(--gray2); text-decoration: none;
-    font-size: 12px; letter-spacing: 1px;
-    transition: color 0.2s;
-    position: relative;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green-dim);
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--green); }
-  .nav-links a:hover::before { color: var(--green); }
+.gap{height:10px}
 
-  /* ---- HERO ---- */
-  #hero { padding: 60px 0 40px; }
+.blink-cursor{display:inline-block;width:7px;height:14px;background:var(--green);vertical-align:middle;animation:blink 1s step-end infinite;margin-left:2px;box-shadow:0 0 6px var(--green)}
 
-  .hero-prompt { margin-bottom: 30px; }
+/* ============================
+   ASCII ART
+   ============================ */
+.ascii{color:var(--green);font-size:clamp(6px,1.6vw,11px);line-height:1.2;white-space:pre;text-shadow:0 0 8px rgba(57,255,20,.4);margin-bottom:20px;overflow-x:auto;text-align:center}
 
-  .ascii-art {
-    color: var(--green);
-    font-size: 11px;
-    line-height: 1.2;
-    white-space: pre;
-    text-shadow: 0 0 10px rgba(57,255,20,0.5);
-    margin-bottom: 24px;
-    overflow-x: auto;
-  }
+/* ============================
+   HERO INFO
+   ============================ */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
+.info-r{display:flex;gap:8px}
+.info-k{color:var(--green);min-width:90px;font-size:11px}
+.info-v{color:var(--white);font-size:11px}
+.info-v .hl{color:var(--yellow)}
 
-  .hero-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 20px;
-  }
+/* ============================
+   SECTION
+   ============================ */
+.sec{padding:30px 0}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.sec-cmd{color:var(--green);font-weight:700;font-size:12px}
+.sec-t{color:var(--white);font-size:12px}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
 
-  .info-row { display: flex; gap: 8px; }
-  .info-key { color: var(--green); min-width: 100px; }
-  .info-val { color: var(--white); }
-  .info-val span { color: var(--yellow); }
+/* ============================
+   3D CUBE
+   ============================ */
+.cube-wrap{perspective:700px;display:flex;justify-content:center;margin:30px 0}
+.cube{width:clamp(100px,20vw,150px);height:clamp(100px,20vw,150px);position:relative;transform-style:preserve-3d;animation:cube-spin 16s linear infinite}
+.cube-f{position:absolute;width:100%;height:100%;border:1px solid var(--green);background:rgba(57,255,20,.02);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--green);letter-spacing:1px;text-transform:uppercase;backface-visibility:visible}
+.cube-f .cf-ico{font-size:clamp(20px,5vw,32px);margin-bottom:4px}
+.cube-f.fr{transform:rotateY(0deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+.cube-f.bk{transform:rotateY(180deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+.cube-f.rt{transform:rotateY(90deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+.cube-f.lt{transform:rotateY(-90deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+.cube-f.tp{transform:rotateX(90deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+.cube-f.bt{transform:rotateX(-90deg) translateZ(calc(clamp(100px,20vw,150px)/2))}
+@keyframes cube-spin{0%{transform:rotateX(0) rotateY(0)}100%{transform:rotateX(360deg) rotateY(360deg)}}
 
-  /* ---- SECTION ---- */
-  section { padding: 40px 0; border-top: 1px solid var(--border); }
+/* ============================
+   STATS ROW (EDEX STYLE)
+   ============================ */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:16px 0}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 10px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.stat-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:0;transition:opacity .3s}
+.stat-box:hover{border-color:var(--green-dim);transform:translateY(-2px)}.stat-box:hover::before{opacity:1}
+.stat-ico{font-size:20px;margin-bottom:6px}
+.stat-val{color:var(--green);font-size:18px;font-weight:700;text-shadow:0 0 8px rgba(57,255,20,.4)}
+.stat-lbl{color:var(--gray2);font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-top:3px}
 
-  .section-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 24px;
-  }
-  .section-cmd {
-    color: var(--green); font-weight: 700;
-    font-size: 13px; letter-spacing: 1px;
-  }
-  .section-title { color: var(--white); font-size: 13px; }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
+/* ============================
+   SKILLS GRID
+   ============================ */
+.sk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.sk-cat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;transition:all .3s;transform-style:preserve-3d}
+.sk-cat:hover{border-color:var(--green-dim);box-shadow:0 0 20px rgba(57,255,20,.05)}
+.sk-cat-name{color:var(--green);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sk-cat-name::before{content:'▸';color:var(--cyan)}
+.sk-item{color:var(--gray2);font-size:11px;margin:3px 0;padding-left:2px}
+.sk-item::before{content:'├─ ';color:var(--green-dim)}
+.sk-item:last-child::before{content:'└─ ';color:var(--green-dim)}
 
-  /* ---- SKILLS ---- */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
-  }
+/* Skill bars */
+.skb-wrap{margin:5px 0}
+.skb-lbl{display:flex;justify-content:space-between;color:var(--gray2);font-size:10px;margin-bottom:3px}
+.skb-lbl span:last-child{color:var(--green)}
+.skb-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.skb-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 4px var(--green);border-radius:1px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 
-  .skill-category {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .skill-category:hover {
-    border-color: var(--green-dim);
-    box-shadow: 0 0 20px rgba(57,255,20,0.06);
-  }
+/* ============================
+   HEX ARSENAL
+   ============================ */
+.hex-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:16px 0}
+.hex{width:clamp(60px,12vw,85px);height:clamp(60px,12vw,85px);background:var(--bg3);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);transition:all .3s;cursor:default}
+.hex:hover{background:rgba(57,255,20,.04);border-color:var(--green);transform:scale(1.1);box-shadow:0 0 20px rgba(57,255,20,.15)}
+.hex .h-ico{font-size:clamp(16px,3vw,22px);margin-bottom:2px}
+.hex .h-lbl{font-size:7px;color:var(--green);letter-spacing:1px;text-transform:uppercase}
 
-  .skill-cat-name {
-    color: var(--green); font-size: 11px;
-    letter-spacing: 2px; text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+/* ============================
+   NETWORK MAP (3D PERSPECTIVE)
+   ============================ */
+.net-map{perspective:800px;margin:16px 0}
+.net-plane{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;transform:rotateX(35deg) rotateZ(-5deg);transform-style:preserve-3d}
+.net-node{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 6px;text-align:center;font-size:9px;transition:all .3s;animation:node-glow 4s ease-in-out infinite alternate}
+.net-node:hover{transform:translateZ(15px);border-color:var(--green);box-shadow:0 0 20px rgba(57,255,20,.15)}
+.net-node:nth-child(odd){animation-delay:-2s}
+@keyframes node-glow{0%{box-shadow:none}100%{box-shadow:0 0 8px rgba(57,255,20,.06)}}
+.nn-ico{font-size:18px;margin-bottom:4px}
+.nn-lbl{color:var(--gray2);font-size:8px;letter-spacing:1px;text-transform:uppercase}
+.nn-st{font-size:8px;margin-top:2px}
+.nn-st.up{color:var(--green)}.nn-st.vuln{color:var(--red)}.nn-st.warn{color:var(--yellow)}.nn-st.sec{color:var(--cyan)}
 
-  .skill-item { color: var(--gray2); font-size: 13px; margin: 4px 0; }
-  .skill-item::before { content: '├─ '; color: var(--green-dim); }
-  .skill-item:last-child::before { content: '└─ '; color: var(--green-dim); }
+/* ============================
+   THREAT CANVAS
+   ============================ */
+.threat-box{position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:clamp(120px,20vh,200px)}
+.threat-box canvas{position:absolute;inset:0;width:100%;height:100%}
 
-  /* ---- SKILL BARS ---- */
-  .skill-bar-wrap { margin: 6px 0; }
-  .skill-bar-label {
-    display: flex; justify-content: space-between;
-    color: var(--gray2); font-size: 12px; margin-bottom: 4px;
-  }
-  .skill-bar-label span:last-child { color: var(--green); }
-  .skill-bar-bg {
-    height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
-  }
-  .skill-bar-fill {
-    height: 100%; background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-    border-radius: 2px;
-    width: 0;
-    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
-  }
+/* Live log */
+.live-log{height:80px;overflow-y:auto;font-size:9px;color:var(--gray2);line-height:1.8}
+.live-log::-webkit-scrollbar{width:2px}
 
-  /* ---- PROJECTS ---- */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 14px;
-  }
+/* ============================
+   PROJECTS
+   ============================ */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.proj{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;transition:all .3s;transform-style:preserve-3d}
+.proj::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:0;transition:opacity .3s}
+.proj:hover{border-color:var(--green-dim);transform:translateY(-2px);box-shadow:0 6px 20px rgba(57,255,20,.06)}
+.proj:hover::before{opacity:1}
+.proj-tag{display:inline-block;background:var(--green-dim);color:var(--green);font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;margin-bottom:8px}
+.proj-name{color:var(--white);font-weight:700;font-size:12px;margin-bottom:4px}
+.proj-desc{color:var(--gray2);font-size:10px;line-height:1.6}
+.proj-tech{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
+.proj-tech span{font-size:8px;padding:1px 5px;border:1px solid var(--border);color:var(--gray2);border-radius:2px;background:var(--bg)}
+.proj-links{margin-top:8px;display:flex;gap:10px}
+.proj-links a{color:var(--green);font-size:9px;text-decoration:none;letter-spacing:1px}
+.proj-links a:hover{text-decoration:underline}
+.proj-links a::before{content:'[';color:var(--gray)}
+.proj-links a::after{content:']';color:var(--gray)}
 
-  .project-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 18px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-  }
-  .project-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--green), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .project-card:hover::before { opacity: 1; }
-  .project-card:hover {
-    border-color: var(--green-dim);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(57,255,20,0.07);
-  }
+/* ============================
+   EXPERIENCE
+   ============================ */
+.exp{border-left:1px solid var(--border);padding-left:14px;margin-bottom:20px;position:relative;transition:border-color .3s}
+.exp:hover{border-left-color:var(--green)}
+.exp::before{content:'◉';position:absolute;left:-6px;top:-1px;color:var(--green);font-size:8px;background:var(--bg);padding:1px 0}
+.exp-date{color:var(--green);font-size:10px;letter-spacing:1px}
+.exp-role{color:var(--white);font-size:12px;font-weight:700;margin:3px 0}
+.exp-co{color:var(--gray2);font-size:10px}
+.exp-desc{color:var(--gray2);font-size:10px;margin-top:6px;line-height:1.7}
 
-  .project-tag {
-    display: inline-block;
-    background: var(--green-dim);
-    color: var(--green);
-    font-size: 10px; letter-spacing: 1px;
-    padding: 2px 8px; border-radius: 2px;
-    margin-bottom: 10px;
-  }
+/* ============================
+   BADGES
+   ============================ */
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.badge{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:9px;color:var(--green);transition:all .3s;position:relative;overflow:hidden}
+.badge::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(57,255,20,.04),transparent);animation:badge-shine 4s infinite}
+@keyframes badge-shine{0%{left:-100%}100%{left:100%}}
+.badge:hover{border-color:var(--green);transform:translateY(-1px);box-shadow:0 0 12px rgba(57,255,20,.1)}
+.badge .b-ico{font-size:14px}
 
-  .project-name {
-    color: var(--white); font-weight: 700;
-    font-size: 14px; margin-bottom: 6px;
-  }
+/* ============================
+   CONTACT
+   ============================ */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.contact-item{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;text-decoration:none;transition:all .3s}
+.contact-item:hover{border-color:var(--green-dim);transform:translateY(-1px);box-shadow:0 0 15px rgba(57,255,20,.05)}
+.c-ico{color:var(--green);font-size:14px;width:18px;text-align:center}
+.c-lbl{color:var(--gray2);font-size:9px;letter-spacing:1px}
+.c-val{color:var(--white);font-size:10px}
 
-  .project-desc { color: var(--gray2); font-size: 12px; line-height: 1.6; }
+/* ============================
+   EDEX BOTTOM TERMINAL
+   ============================ */
+.edex-bottom{border:1px solid var(--border);background:var(--bg2);border-radius:var(--radius);margin:16px 0;overflow:hidden}
+.edex-bottom .term-bar{height:24px;padding:4px 10px}
+.edex-bottom .term-bd{padding:10px 12px;font-size:11px;min-height:60px}
 
-  .project-tech {
-    margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .tech-badge {
-    font-size: 10px; padding: 2px 7px;
-    border: 1px solid var(--border);
-    color: var(--gray2); border-radius: 2px;
-    background: var(--bg);
-  }
+/* ============================
+   FOOTER
+   ============================ */
+footer{border-top:1px solid var(--border);padding:20px 0 30px;text-align:center;color:var(--gray);font-size:9px;letter-spacing:1px}
+footer span{color:var(--green)}
 
-  .project-links {
-    margin-top: 12px; display: flex; gap: 12px;
-  }
-  .project-link {
-    color: var(--green); font-size: 11px;
-    text-decoration: none; letter-spacing: 1px;
-  }
-  .project-link:hover { text-decoration: underline; }
-  .project-link::before { content: '['; color: var(--gray); }
-  .project-link::after { content: ']'; color: var(--gray); }
+/* ============================
+   BACK TO TOP
+   ============================ */
+.btt{position:fixed;bottom:20px;right:20px;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:12px;cursor:pointer;z-index:200;opacity:0;transform:translateY(8px);transition:all .3s;text-decoration:none}
+.btt.show{opacity:1;transform:none}
+.btt:hover{border-color:var(--green);box-shadow:0 0 15px rgba(57,255,20,.15);transform:translateY(-2px)}
 
-  /* ---- EXPERIENCE ---- */
-  .exp-item {
-    border-left: 1px solid var(--border);
-    padding-left: 18px; margin-bottom: 24px;
-    position: relative;
-  }
-  .exp-item::before {
-    content: '●';
-    position: absolute; left: -7px; top: 0;
-    color: var(--green); font-size: 10px;
-    background: var(--bg); padding: 2px 0;
-  }
-  .exp-date { color: var(--green); font-size: 11px; letter-spacing: 1px; }
-  .exp-role { color: var(--white); font-size: 14px; font-weight: 700; margin: 4px 0; }
-  .exp-company { color: var(--gray2); font-size: 12px; }
-  .exp-desc { color: var(--gray2); font-size: 12px; margin-top: 8px; line-height: 1.7; }
+/* ============================
+   FADE / STAGGER ANIMATIONS
+   ============================ */
+.fi{opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}
+.fi.vis{opacity:1;transform:none}
+.stag>*{opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s}
+.stag.vis>*{opacity:1;transform:none}
+.stag.vis>*:nth-child(1){transition-delay:.05s}
+.stag.vis>*:nth-child(2){transition-delay:.1s}
+.stag.vis>*:nth-child(3){transition-delay:.15s}
+.stag.vis>*:nth-child(4){transition-delay:.2s}
+.stag.vis>*:nth-child(5){transition-delay:.25s}
+.stag.vis>*:nth-child(6){transition-delay:.3s}
+.stag.vis>*:nth-child(7){transition-delay:.35s}
+.stag.vis>*:nth-child(8){transition-delay:.4s}
+.stag.vis>*:nth-child(9){transition-delay:.45s}
+.stag.vis>*:nth-child(10){transition-delay:.5s}
+.stag.vis>*:nth-child(11){transition-delay:.55s}
+.stag.vis>*:nth-child(12){transition-delay:.6s}
 
-  /* ---- CONTACT ---- */
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+/* ============================
+   GLITCH
+   ============================ */
+.glitch{position:relative;color:var(--green);font-weight:700}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}
+.glitch::before{color:var(--red);animation:g1 3s infinite;clip-path:polygon(0 30%,100% 30%,100% 50%,0 50%)}
+.glitch::after{color:var(--blue);animation:g2 3s infinite;clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%)}
+@keyframes g1{0%,90%,100%{transform:none;opacity:0}92%{transform:translate(-2px,0);opacity:.8}94%{transform:translate(2px,0);opacity:.8}96%{transform:none;opacity:0}}
+@keyframes g2{0%,93%,100%{transform:none;opacity:0}95%{transform:translate(2px,0);opacity:.8}97%{transform:translate(-2px,0);opacity:.8}99%{transform:none;opacity:0}}
 
-  .contact-item {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 4px; padding: 12px 16px;
-    text-decoration: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .contact-item:hover {
-    border-color: var(--green-dim);
-    box-shadow: 0 0 20px rgba(57,255,20,0.06);
-  }
-  .contact-icon { color: var(--green); font-size: 16px; width: 20px; text-align: center; }
-  .contact-label { color: var(--gray2); font-size: 11px; }
-  .contact-val { color: var(--white); font-size: 12px; }
-
-  /* ---- FOOTER ---- */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 30px 0 40px;
-    text-align: center;
-    color: var(--gray);
-    font-size: 11px;
-    letter-spacing: 1px;
-  }
-  footer span { color: var(--green); }
-
-  /* ---- 3D TILT EFFECT ---- */
-  .tilt-card { transform-style: preserve-3d; transition: transform 0.15s ease; }
-
-  /* ---- GLITCH TEXT ---- */
-  .glitch {
-    position: relative;
-    color: var(--green);
-    font-weight: 700;
-  }
-  .glitch::before, .glitch::after {
-    content: attr(data-text);
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-  }
-  .glitch::before {
-    color: var(--red);
-    animation: glitch1 3s infinite;
-    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
-  }
-  .glitch::after {
-    color: var(--blue);
-    animation: glitch2 3s infinite;
-    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
-  }
-  @keyframes glitch1 {
-    0%, 90%, 100% { transform: none; opacity: 0; }
-    92% { transform: translate(-2px, 0); opacity: 0.8; }
-    94% { transform: translate(2px, 0); opacity: 0.8; }
-    96% { transform: none; opacity: 0; }
-  }
-  @keyframes glitch2 {
-    0%, 93%, 100% { transform: none; opacity: 0; }
-    95% { transform: translate(2px, 0); opacity: 0.8; }
-    97% { transform: translate(-2px, 0); opacity: 0.8; }
-    99% { transform: none; opacity: 0; }
-  }
-
-  /* ---- PARTICLES ---- */
-  #particles {
-    position: fixed; inset: 0;
-    pointer-events: none; z-index: 0;
-  }
-
-  /* ---- FADE IN ANIMATION ---- */
-  /* Visible by default — JS progressively enhances this */
-  .fade-in {
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .js-loaded .fade-in {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  .js-loaded .fade-in.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* ---- TYPE ANIMATION ---- */
-  .typewriter {
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid transparent;
-    width: 0;
-    animation: typing 2s steps(40) forwards;
-  }
-  @keyframes typing {
-    to { width: 100%; }
-  }
-
-  /* ---- MOBILE ---- */
-  @media (max-width: 600px) {
-    .hero-info { grid-template-columns: 1fr; }
-    .contact-grid { grid-template-columns: 1fr; }
-    .ascii-art { font-size: 7px; }
-    nav .nav-links { gap: 12px; }
-    nav .nav-links a { font-size: 11px; }
-  }
+/* ============================
+   RESPONSIVE BREAKPOINTS
+   ============================ */
+/* Tablets */
+@media(max-width:1024px){
+  .edex-layout{grid-template-columns:160px 1fr 160px}
+  .edex-topbar-nav a{padding:0 10px;font-size:9px}
+}
+/* Small tablets */
+@media(max-width:850px){
+  .edex-layout{grid-template-columns:1fr;gap:10px;padding:10px}
+  .edex-side{display:none}
+  .edex-side.mobile-show{display:block;margin-bottom:10px}
+  .edex-main{padding:0}
+  .hero-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .net-plane{grid-template-columns:repeat(3,1fr)}
+  .edex-sys-info{display:none}
+}
+/* Phones */
+@media(max-width:600px){
+  html{font-size:12px}
+  .ascii{font-size:clamp(5px,2.5vw,8px)}
+  .edex-topbar-inner{height:34px}
+  .edex-topbar-brand{padding:0 10px;font-size:10px}
+  .edex-topbar-nav a{padding:0 8px;font-size:8px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .sk-grid{grid-template-columns:1fr}
+  .proj-grid{grid-template-columns:1fr}
+  .net-plane{grid-template-columns:repeat(2,1fr);transform:rotateX(20deg) rotateZ(-2deg)}
+  .hex{width:55px;height:55px}
+  .hex .h-ico{font-size:14px}
+  .hex .h-lbl{font-size:6px}
+  .cube-wrap{margin:20px 0}
+}
+/* Very small phones */
+@media(max-width:380px){
+  .edex-topbar-nav a{padding:0 5px;font-size:7px;letter-spacing:0}
+  .edex-topbar-brand{font-size:9px;padding:0 6px}
+}
+/* Landscape phones */
+@media(max-height:500px) and (orientation:landscape){
+  .edex-layout{grid-template-columns:120px 1fr 120px}
+  .edex-side .edex-side-body{font-size:8px}
+  #boot .boot-lines{max-height:30vh;font-size:9px}
+  .cube-wrap{margin:10px 0}
+}
+/* Ultra-wide */
+@media(min-width:1600px){
+  .edex-layout{max-width:1400px;grid-template-columns:240px 1fr 240px}
+}
+/* 4K */
+@media(min-width:2500px){
+  html{font-size:18px}
+  .edex-layout{max-width:1800px;grid-template-columns:300px 1fr 300px}
+}
 </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-dot" id="cursorDot"></div>
+<!-- ===== BOOT SCREEN ===== -->
+<div id="boot">
+  <div class="boot-kali-logo">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="#39ff14" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <path d="M50 15 L80 35 L80 65 L50 85 L20 65 L20 35 Z" stroke="#39ff14" stroke-width="1" fill="rgba(57,255,20,0.03)"/>
+      <text x="50" y="55" text-anchor="middle" font-family="monospace" font-size="24" fill="#39ff14" font-weight="bold">K</text>
+      <circle cx="50" cy="50" r="45" stroke="#39ff14" stroke-width="0.3" fill="none" opacity="0.3">
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="20s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+  <div class="boot-lines" id="boot-lines"></div>
+  <div class="boot-bar-wrap">
+    <div class="boot-bar-label"><span>INITIALIZING SYSTEM</span><span id="boot-pct">0%</span></div>
+    <div class="boot-bar"><div class="boot-bar-fill" id="boot-fill"></div></div>
+  </div>
+  <div class="boot-access" id="boot-access">⚠ ROOT ACCESS GRANTED — WELCOME, SIVNSH7</div>
+</div>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a class="nav-brand" href="#hero"><span>root</span>@sivnsh7</a>
-    <ul class="nav-links">
-      <li><a href="#about">about</a></li>
-      <li><a href="#skills">skills</a></li>
-      <li><a href="#projects">projects</a></li>
-      <li><a href="#experience">exp</a></li>
-      <li><a href="#contact">contact</a></li>
+<!-- SCROLL PROGRESS -->
+<div id="scroll-prog"></div>
+
+<!-- CANVASES -->
+<canvas id="matrix" style="position:fixed;inset:0;z-index:0;opacity:.06;pointer-events:none"></canvas>
+<canvas id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none"></canvas>
+
+<!-- CURSOR -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-dot" id="curDot"></div>
+
+<!-- BACK TO TOP -->
+<a class="btt" id="btt" href="#hero">▲</a>
+
+<!-- ===== EDEX TOPBAR ===== -->
+<nav class="edex-topbar">
+  <div class="edex-topbar-inner">
+    <a class="edex-topbar-brand" href="#hero" style="text-decoration:none">
+      <svg class="kali-ico" viewBox="0 0 100 100" fill="none"><path d="M50 10 L85 32 L85 68 L50 90 L15 68 L15 32 Z" stroke="#39ff14" stroke-width="2" fill="none"/><text x="50" y="58" text-anchor="middle" font-family="monospace" font-size="28" fill="#39ff14" font-weight="bold">K</text></svg>
+      <span class="user">root</span>@sivnsh7
+    </a>
+    <ul class="edex-topbar-nav">
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#skills">SKILLS</a></li>
+      <li><a href="#arsenal">ARSENAL</a></li>
+      <li><a href="#projects">PROJECTS</a></li>
+      <li><a href="#exp">EXP</a></li>
+      <li><a href="#contact">CONTACT</a></li>
     </ul>
+    <div class="edex-sys-info">
+      <div class="sys-dot"></div>
+      <span id="clock">00:00:00</span>
+      <span>|</span>
+      <span>PID:<span id="pid" style="color:var(--green)">1337</span></span>
+    </div>
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="page">
-  <section id="hero">
-    <div class="term-window fade-in">
-      <div class="term-titlebar">
-        <div class="term-dots">
-          <div class="dot red"></div>
-          <div class="dot yellow"></div>
-          <div class="dot green"></div>
-        </div>
-        <div class="term-title">kali@sivnsh7: ~/portfolio — bash</div>
+<!-- ===== EDEX LAYOUT ===== -->
+<div class="edex-layout">
+
+  <!-- LEFT PANEL - FILE SYSTEM -->
+  <aside class="edex-side" id="left-panel">
+    <div class="edex-side-header">FILE SYSTEM</div>
+    <div class="edex-side-body">
+      <div class="fs-tree">
+        <div><span class="dir">/</span></div>
+        <div class="indent"><span class="dir">home/</span></div>
+        <div class="indent2"><span class="dir">sivnsh7/</span></div>
+        <div class="indent2"><span class="file">├─ .bashrc</span></div>
+        <div class="indent2"><span class="file">├─ .profile</span></div>
+        <div class="indent2"><span class="exec">├─ recon.py</span></div>
+        <div class="indent2"><span class="exec">├─ scanner.sh</span></div>
+        <div class="indent2"><span class="dir">├─ tools/</span></div>
+        <div class="indent2"><span class="dir">├─ projects/</span></div>
+        <div class="indent2"><span class="dir">├─ payloads/</span></div>
+        <div class="indent2"><span class="file">├─ notes.md</span></div>
+        <div class="indent2"><span class="dir">└─ .ssh/</span></div>
+        <div class="indent"><span class="dir">etc/</span></div>
+        <div class="indent"><span class="dir">var/log/</span></div>
+        <div class="indent"><span class="dir">opt/</span></div>
+        <div class="indent"><span class="dir">usr/share/</span></div>
       </div>
-      <div class="term-body">
-        <pre class="ascii-art">
+    </div>
+    <div class="edex-side-header" style="margin-top:6px">PROCESSES</div>
+    <div class="edex-side-body">
+      <div class="proc-list" id="proc-list">
+        <div><span class="pid">1</span><span class="pname">systemd</span><span class="pcpu">0.1%</span></div>
+        <div><span class="pid">337</span><span class="pname">sshd</span><span class="pcpu">0.0%</span></div>
+        <div><span class="pid">420</span><span class="pname">NetworkMgr</span><span class="pcpu">0.3%</span></div>
+        <div><span class="pid">512</span><span class="pname">apache2</span><span class="pcpu">1.2%</span></div>
+        <div><span class="pid">666</span><span class="pname">metasploit</span><span class="pcpu">3.7%</span></div>
+        <div><span class="pid">777</span><span class="pname">burpsuite</span><span class="pcpu">8.2%</span></div>
+        <div><span class="pid">888</span><span class="pname">python3</span><span class="pcpu">2.1%</span></div>
+        <div><span class="pid">999</span><span class="pname">nmap</span><span class="pcpu">4.5%</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="edex-main">
+
+    <!-- HERO -->
+    <section id="hero" class="sec">
+      <div class="term fi">
+        <div class="term-bar">
+          <div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="term-ttl">root@sivnsh7:~/portfolio — bash — 80×24</div>
+        </div>
+        <div class="term-bd">
+<pre class="ascii">
  ███████╗██╗██╗   ██╗███╗   ██╗███████╗██╗  ██╗███████╗
  ██╔════╝██║██║   ██║████╗  ██║██╔════╝██║  ██║╚════██║
  ███████╗██║██║   ██║██╔██╗ ██║███████╗███████║    ██╔╝
- ╚════██║██║╚██╗ ██╔╝██║╚██╗██║╚════██║██╔══██║   ██╔╝ 
- ███████║██║ ╚████╔╝ ██║ ╚████║███████║██║  ██║   ██║  
- ╚══════╝╚═╝  ╚═══╝  ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝  </pre>
-
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
-          <span class="p-cmd">whoami</span>
-        </div>
-        <div class="output white" style="margin-top:8px;font-size:22px;font-weight:700;">
-          <span class="glitch" data-text="Sivnsh">Sivnsh</span>
-        </div>
-
-        <div class="line-gap"></div>
-
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
-          <span class="p-cmd">cat /etc/profile</span>
-        </div>
-
-        <div class="hero-info" style="margin-top:14px;">
-          <div>
-            <div class="info-row"><span class="info-key">NAME</span><span class="info-val"><span>sivnsh7</span></span></div>
-
-            <div class="info-row"><span class="info-key">ROLE</span><span class="info-val">Developer &amp; Security Enthusiast</span></div>
-            <div class="info-row"><span class="info-key">OS</span><span class="info-val">Kali Linux Rolling</span></div>
+ ╚════██║██║╚██╗ ██╔╝██║╚██╗██║╚════██║██╔══██║   ██╔╝
+ ███████║██║ ╚████╔╝ ██║ ╚████║███████║██║  ██║   ██║
+ ╚══════╝╚═╝  ╚═══╝  ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝   ╚═╝</pre>
+          <div class="ps1">
+            <span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~</span><span class="ha">#</span>
+            <span class="cmd">whoami</span>
           </div>
-          <div>
-            <div class="info-row"><span class="info-key">SHELL</span><span class="info-val">/bin/bash</span></div>
-            <div class="info-row"><span class="info-key">LOCATION</span><span class="info-val">India</span></div>
-            <div class="info-row"><span class="info-key">STATUS</span><span class="info-val" style="color:var(--green);">● ONLINE</span></div>
-            <div class="info-row"><span class="info-key">CLEARANCE</span><span class="info-val"><span>ROOT</span></span></div>
+          <div class="out w" style="margin-top:6px;font-size:20px;font-weight:700">
+            <span class="glitch" data-text="Sivnsh">Sivnsh</span>
           </div>
-        </div>
-
-        <div class="line-gap"></div>
-
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-hash">#</span>
-          <span class="blink"></span>
+          <div class="gap"></div>
+          <div class="ps1">
+            <span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~</span><span class="ha">#</span>
+            <span class="cmd">cat /etc/profile</span>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="info-r"><span class="info-k">NAME</span><span class="info-v"><span class="hl">sivnsh7</span></span></div>
+              <div class="info-r"><span class="info-k">ROLE</span><span class="info-v">Security Researcher & Dev</span></div>
+              <div class="info-r"><span class="info-k">OS</span><span class="info-v">Kali Linux 2024.4</span></div>
+              <div class="info-r"><span class="info-k">KERNEL</span><span class="info-v">6.6.0-kali1-amd64</span></div>
+            </div>
+            <div>
+              <div class="info-r"><span class="info-k">SHELL</span><span class="info-v">/bin/zsh</span></div>
+              <div class="info-r"><span class="info-k">LOCATION</span><span class="info-v">India</span></div>
+              <div class="info-r"><span class="info-k">STATUS</span><span class="info-v" style="color:var(--green)">● ONLINE</span></div>
+              <div class="info-r"><span class="info-k">CLEARANCE</span><span class="info-v"><span class="hl">ROOT</span></span></div>
+            </div>
+          </div>
+          <div class="gap"></div>
+          <!-- AUTO-TYPING -->
+          <div class="ps1">
+            <span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~</span><span class="ha">#</span>
+            <span class="cmd" id="auto-cmd"></span><span class="blink-cursor"></span>
+          </div>
+          <div class="out g" id="auto-out" style="min-height:16px"></div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ABOUT -->
-  <section id="about" class="fade-in">
-    <div class="section-header">
-      <span class="section-cmd">$</span>
-      <span class="section-title">cat about.txt</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="term-window">
-      <div class="term-titlebar">
-        <div class="term-dots">
-          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-        </div>
-        <div class="term-title">about.txt</div>
-      </div>
-      <div class="term-body">
-        <div class="output" style="color:var(--gray2);line-height:1.9;font-size:13px;">
-          <span style="color:var(--green);"># /home/sivnsh7/.profile</span><br><br>
-          I'm a student, developer, and security enthusiast based in India. I enjoy
-          breaking things apart to understand how they work — whether that's networks,
-          systems, or financial models.<br><br>
-          
-          <span style="color:var(--green);">Interests:</span> Kali Linux · Pentesting · Virtual Machines · Finance · Web Dev · Automation<br>
-          <span style="color:var(--green);">Learning:</span> OSCP prep · Web App Security · Python scripting · Networking
+      <!-- 3D CUBE -->
+      <div class="cube-wrap fi">
+        <div class="cube" id="cube3d">
+          <div class="cube-f fr"><div class="cf-ico">🛡️</div>SECURITY</div>
+          <div class="cube-f bk"><div class="cf-ico">💻</div>DEVELOPER</div>
+          <div class="cube-f rt"><div class="cf-ico">🐉</div>KALI</div>
+          <div class="cube-f lt"><div class="cf-ico">🌐</div>NETWORK</div>
+          <div class="cube-f tp"><div class="cf-ico">🔓</div>PENTEST</div>
+          <div class="cube-f bt"><div class="cf-ico">⚡</div>AUTOMATE</div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SKILLS -->
-  <section id="skills" class="fade-in">
-    <div class="section-header">
-      <span class="section-cmd">$</span>
-      <span class="section-title">ls -la skills/</span>
-      <div class="section-line"></div>
-    </div>
+    <!-- STATS -->
+    <section id="stats" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">htop --summary</span><div class="sec-line"></div></div>
+      <div class="stats-row stag" id="stats-section">
+        <div class="stat-box"><div class="stat-ico">☕</div><div class="stat-val" data-target="847" id="s1">0</div><div class="stat-lbl">Coffee Cups</div></div>
+        <div class="stat-box"><div class="stat-ico">🐛</div><div class="stat-val" data-target="256" id="s2">0</div><div class="stat-lbl">Bugs Squashed</div></div>
+        <div class="stat-box"><div class="stat-ico">💀</div><div class="stat-val" data-target="42" id="s3">0</div><div class="stat-lbl">CTFs Solved</div></div>
+        <div class="stat-box"><div class="stat-ico">⏱️</div><div class="stat-val" data-target="365" id="s4">0</div><div class="stat-lbl">Uptime Days</div></div>
+        <div class="stat-box"><div class="stat-ico">🔥</div><div class="stat-val" data-target="1337" id="s5">0</div><div class="stat-lbl">Lines of Code</div></div>
+        <div class="stat-box"><div class="stat-ico">🎯</div><div class="stat-val" data-target="89" id="s6">0</div><div class="stat-lbl">Machines Pwned</div></div>
+      </div>
+    </section>
 
-    <div class="skills-grid" style="margin-bottom:20px;">
-      <div class="skill-category tilt-card">
-        <div class="skill-cat-name">// security</div>
-        <div class="skill-item">Kali Linux</div>
-        <div class="skill-item">Nmap / Netcat</div>
-        <div class="skill-item">Burp Suite</div>
-        <div class="skill-item">Metasploit</div>
-        <div class="skill-item">Wireshark</div>
-      
-      </div>
-      <div class="skill-category tilt-card">
-        <div class="skill-cat-name">// systems</div>
-        <div class="skill-item">Linux Administration</div>
-        <div class="skill-item">VirtualBox / VMware</div>
-        <div class="skill-item">Networking Basics</div>
-        <div class="skill-item">Personal VPN Setups</div>
-        <div class="skill-item">SSH / SCP</div>
-      
-      </div>
-    </div>
-
-    <!-- Skill bars -->
-    <div class="term-window">
-      <div class="term-titlebar">
-        <div class="term-dots">
-          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-        </div>
-        <div class="term-title">skill_levels.sh</div>
-      </div>
-      <div class="term-body">
-        <div id="skill-bars">
-          <div class="skill-bar-wrap" data-level="85">
-            <div class="skill-bar-label"><span>Linux / Kali</span><span>85%</span></div>
-            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
-          </div>
-          <div class="skill-bar-wrap" data-level="80">
-            <div class="skill-bar-label"><span>Layered Network Encapsulation</span><span>80%</span></div>
-            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
-          </div>
-          <div class="skill-bar-wrap" data-level="75">
-            <div class="skill-bar-label"><span>Web Security</span><span>75%</span></div>
-            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
-          </div>
-          <div class="skill-bar-wrap" data-level="70">
-            <div class="skill-bar-label"><span>Secure Remote Access Architecture</span><span>70%</span></div>
-            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
-          </div>
-          <div class="skill-bar-wrap" data-level="65">
-            <div class="skill-bar-label"><span>Networking</span><span>65%</span></div>
-            <div class="skill-bar-bg"><div class="skill-bar-fill"></div></div>
+    <!-- ABOUT -->
+    <section id="about" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">cat about.txt</span><div class="sec-line"></div></div>
+      <div class="term">
+        <div class="term-bar"><div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="term-ttl">nano — about.txt</div></div>
+        <div class="term-bd">
+          <div class="out" style="line-height:1.9;font-size:11px">
+            <span style="color:var(--green)"># /home/sivnsh7/.profile</span><br><br>
+            I'm a student, developer, and security enthusiast from India. I enjoy breaking
+            things apart to understand how they work — networks, systems, or financial models.<br><br>
+            My journey started with curiosity — opening a terminal, running
+            <span style="color:var(--green)">nmap</span> on my own network, and realizing how deep the rabbit hole goes.
+            Now I build tools, break into vulnerable machines (legally!), and automate everything.<br><br>
+            <span style="color:var(--green)">Interests:</span> Kali Linux · Pentesting · VMs · Finance · Web Dev · Automation<br>
+            <span style="color:var(--green)">Learning:</span> OSCP prep · Web App Security · Python · Advanced Networking<br>
+            <span style="color:var(--green)">Philosophy:</span> <span style="color:var(--yellow)">"If you know the enemy and know yourself, you need not fear the result of a hundred battles."</span> — Sun Tzu
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS -->
-  <section id="projects" class="fade-in">
-    <div class="section-header">
-      <span class="section-cmd">$</span>
-      <span class="section-title">find ./projects -type f -name "*.sh"</span>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="projects-grid">
-      <div class="project-card tilt-card">
-        <div class="project-tag">SECURITY</div>
-        <div class="project-name">Network Scanner</div>
-        <div class="project-desc">Custom Python + Nmap wrapper for automated network recon and vulnerability mapping on local networks.</div>
-        <div class="project-tech">
-          <span class="tech-badge">Python</span>
-          <span class="tech-badge">Nmap</span>
-          <span class="tech-badge">Bash</span>
+      <div style="margin-top:12px">
+        <div class="ps1" style="margin-bottom:8px">
+          <span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~/certs</span><span class="ha">#</span>
+          <span class="cmd">ls badges/</span>
         </div>
-        <div class="project-links">
-          <a class="project-link" href="#">GitHub</a>
-          <a class="project-link" href="#">Demo</a>
+        <div class="badges stag">
+          <div class="badge"><span class="b-ico">🎯</span>OSCP (Prep)</div>
+          <div class="badge"><span class="b-ico">🐧</span>Linux Expert</div>
+          <div class="badge"><span class="b-ico">🕸️</span>OWASP Top 10</div>
+          <div class="badge"><span class="b-ico">🏴</span>CTF Player</div>
+          <div class="badge"><span class="b-ico">🔧</span>Automation</div>
+          <div class="badge"><span class="b-ico">🐍</span>Python Dev</div>
+          <div class="badge"><span class="b-ico">🛡️</span>Pentester</div>
         </div>
       </div>
+    </section>
 
-      <div class="project-card tilt-card">
-        <div class="project-tag">AUTOMATION</div>
-        <div class="project-name">VM Lab Setup Script</div>
-        <div class="project-desc">Bash script to auto-configure Kali Linux VMs with essential pentesting tools, aliases, and ZSH config.</div>
-        <div class="project-tech">
-          <span class="tech-badge">Bash</span>
-          <span class="tech-badge">Kali</span>
-          <span class="tech-badge">VirtualBox</span>
-        </div>
-        <div class="project-links">
-          <a class="project-link" href="#">GitHub</a>
+    <!-- SKILLS -->
+    <section id="skills" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">ls -la skills/</span><div class="sec-line"></div></div>
+      <div class="sk-grid stag">
+        <div class="sk-cat tilt-card"><div class="sk-cat-name">offensive security</div><div class="sk-item">Kali Linux</div><div class="sk-item">Nmap / Netcat / Masscan</div><div class="sk-item">Burp Suite Pro</div><div class="sk-item">Metasploit Framework</div><div class="sk-item">Wireshark / Tshark</div><div class="sk-item">SQLmap</div></div>
+        <div class="sk-cat tilt-card"><div class="sk-cat-name">systems & infra</div><div class="sk-item">Linux Administration</div><div class="sk-item">VirtualBox / VMware</div><div class="sk-item">Docker Basics</div><div class="sk-item">VPN / Tunneling</div><div class="sk-item">SSH / SCP / SFTP</div><div class="sk-item">Firewall Config</div></div>
+        <div class="sk-cat tilt-card"><div class="sk-cat-name">development</div><div class="sk-item">Python 3</div><div class="sk-item">Bash / Shell</div><div class="sk-item">HTML / CSS / JS</div><div class="sk-item">Git & GitHub</div><div class="sk-item">Automation Scripts</div><div class="sk-item">API Integration</div></div>
+        <div class="sk-cat tilt-card"><div class="sk-cat-name">recon & osint</div><div class="sk-item">Subdomain Enum</div><div class="sk-item">Google Dorking</div><div class="sk-item">Shodan / Censys</div><div class="sk-item">theHarvester</div><div class="sk-item">Maltego</div><div class="sk-item">WHOIS / DNS Recon</div></div>
+      </div>
+      <div class="term" style="margin-top:14px">
+        <div class="term-bar"><div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="term-ttl">skill_levels.sh — output</div></div>
+        <div class="term-bd">
+          <div id="skill-bars">
+            <div class="skb-wrap" data-level="88"><div class="skb-lbl"><span>Linux / Kali</span><span>88%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="82"><div class="skb-lbl"><span>Network Exploitation</span><span>82%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="78"><div class="skb-lbl"><span>Web Application Security</span><span>78%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="80"><div class="skb-lbl"><span>Python Scripting</span><span>80%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="74"><div class="skb-lbl"><span>Bash / Shell</span><span>74%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="70"><div class="skb-lbl"><span>VPN & Tunneling</span><span>70%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+            <div class="skb-wrap" data-level="65"><div class="skb-lbl"><span>Reverse Engineering</span><span>65%</span></div><div class="skb-bg"><div class="skb-fill"></div></div></div>
+          </div>
         </div>
       </div>
+    </section>
 
+    <!-- ARSENAL -->
+    <section id="arsenal" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">dpkg -l | grep pentest</span><div class="sec-line"></div></div>
+      <div class="hex-grid stag">
+        <div class="hex tilt-card"><div class="h-ico">🐉</div><div class="h-lbl">Kali</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🔍</div><div class="h-lbl">Nmap</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🕷️</div><div class="h-lbl">Burp</div></div>
+        <div class="hex tilt-card"><div class="h-ico">💣</div><div class="h-lbl">MSF</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🦈</div><div class="h-lbl">Wireshark</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🐍</div><div class="h-lbl">Python</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🐚</div><div class="h-lbl">Bash</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🔑</div><div class="h-lbl">John</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🌐</div><div class="h-lbl">Gobuster</div></div>
+        <div class="hex tilt-card"><div class="h-ico">📡</div><div class="h-lbl">Netcat</div></div>
+        <div class="hex tilt-card"><div class="h-ico">🛰️</div><div class="h-lbl">Shodan</div></div>
+        <div class="hex tilt-card"><div class="h-ico">⚡</div><div class="h-lbl">Hydra</div></div>
+      </div>
 
-      <div class="project-card tilt-card" style="border-style:dashed; display:flex; align-items:center; justify-content:center; min-height:160px;">
-        <div style="text-align:center; color:var(--gray);">
-          <div style="font-size:24px; margin-bottom:8px;">+</div>
-          <div style="font-size:12px;">more coming soon...</div>
-          <div style="font-size:11px; margin-top:4px; color:var(--green-dim);">[ currently in /dev ]</div>
+      <!-- NETWORK TOPOLOGY -->
+      <div style="margin-top:20px">
+        <div class="ps1" style="margin-bottom:10px">
+          <span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~/net</span><span class="ha">#</span>
+          <span class="cmd">nmap -sn 192.168.1.0/24</span>
+        </div>
+        <div class="net-map">
+          <div class="net-plane stag">
+            <div class="net-node"><div class="nn-ico">🖥️</div><div class="nn-lbl">Gateway</div><div class="nn-st up">● UP</div></div>
+            <div class="net-node"><div class="nn-ico">🐧</div><div class="nn-lbl">Kali VM</div><div class="nn-st up">● ROOT</div></div>
+            <div class="net-node"><div class="nn-ico">🎯</div><div class="nn-lbl">Target</div><div class="nn-st vuln">● VULN</div></div>
+            <div class="net-node"><div class="nn-ico">🛡️</div><div class="nn-lbl">Firewall</div><div class="nn-st sec">● ACTIVE</div></div>
+            <div class="net-node"><div class="nn-ico">📡</div><div class="nn-lbl">AP</div><div class="nn-st up">● UP</div></div>
+            <div class="net-node"><div class="nn-ico">🗄️</div><div class="nn-lbl">Server</div><div class="nn-st up">● UP</div></div>
+            <div class="net-node"><div class="nn-ico">🕸️</div><div class="nn-lbl">WebApp</div><div class="nn-st warn">● WARN</div></div>
+            <div class="net-node"><div class="nn-ico">🔒</div><div class="nn-lbl">VPN</div><div class="nn-st sec">● SECURE</div></div>
+            <div class="net-node"><div class="nn-ico">💾</div><div class="nn-lbl">Database</div><div class="nn-st up">● UP</div></div>
+            <div class="net-node"><div class="nn-ico">🐙</div><div class="nn-lbl">C2</div><div class="nn-st vuln">● HOT</div></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- EXPERIENCE -->
-  <section id="experience" class="fade-in">
-    <div class="section-header">
-      <span class="section-cmd">$</span>
-      <span class="section-title">cat /var/log/experience.log</span>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="exp-item">
-      <div class="exp-date">2026 — PRESENT</div>
-      <div class="exp-role">Independent Security Researcher</div>
-      <div class="exp-company">Self-Directed / Home Lab</div>
-      <div class="exp-desc">Running Kali Linux in VM environments for hands-on pentesting practice. Studying network protocols, web vulnerabilities (OWASP Top 10), and CTF challenges.</div>
-    </div>
-
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact" class="fade-in">
-    <div class="section-header">
-      <span class="section-cmd">$</span>
-      <span class="section-title">netstat -connect contact/</span>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="contact-grid">
-      <a class="contact-item" href="https://github.com/sivnsh7" target="_blank">
-        <div class="contact-icon">⌘</div>
-        <div>
-          <div class="contact-label">GITHUB</div>
-          <div class="contact-val">github.com/sivnsh7</div>
-        </div>
-      </a>
-      <a class="contact-item" href="mailto:sivnsh7@gmail.com">
-        <div class="contact-icon">✉</div>
-        <div>
-          <div class="contact-label">EMAIL</div>
-          <div class="contact-val">sivnsh7@gmail.com</div>
-        </div>
-      </a>
-      <a class="contact-item" href="https://t.me/sivnsh" target="_blank">
-        <div class="contact-icon">◈</div>
-        <div>
-          <div class="contact-label">TELEGRAM</div>
-          <div class="contact-val">telegram.com/in/sivnsh</div>
-        </div>
-      </a>
-      <a class="contact-item" href="https://www.instagram.com/sivnsh7.in" target="_blank">
-        <div class="contact-icon">◉</div>
-        <div>
-          <div class="contact-label">INSTAGRAM</div>
-          <div class="contact-val">@sivnsh7.in</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Terminal contact form hint -->
-    <div class="term-window" style="margin-top:20px;">
-      <div class="term-titlebar">
-        <div class="term-dots">
-          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-        </div>
-        <div class="term-title">message.sh</div>
+    <!-- THREAT MAP -->
+    <section id="threats" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">tail -f /var/log/threats.log</span><div class="sec-line"></div></div>
+      <div class="threat-box"><canvas id="threat-cv"></canvas></div>
+      <div class="term" style="margin-top:8px">
+        <div class="term-bar"><div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="term-ttl">live_feed.log</div></div>
+        <div class="term-bd"><div class="live-log" id="live-log"></div></div>
       </div>
-      <div class="term-body">
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
-          <span class="p-cmd">echo "Want to collaborate or just talk tech?"</span>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">find ./projects -name "*.py" -o -name "*.sh"</span><div class="sec-line"></div></div>
+      <div class="proj-grid stag">
+        <div class="proj tilt-card">
+          <div class="proj-tag">SECURITY</div>
+          <div class="proj-name">Network Scanner</div>
+          <div class="proj-desc">Custom Python + Nmap wrapper for automated recon and vulnerability mapping on local networks.</div>
+          <div class="proj-tech"><span>Python</span><span>Nmap</span><span>Bash</span></div>
+          <div class="proj-links"><a href="#">GitHub</a><a href="#">Demo</a></div>
         </div>
-        <div class="output green" style="margin-top:6px;">Want to collaborate or just talk tech?</div>
-        <div class="line-gap"></div>
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
-          <span class="p-cmd">ping sivnsh7.in -c 1</span>
+        <div class="proj tilt-card">
+          <div class="proj-tag">AUTOMATION</div>
+          <div class="proj-name">VM Lab Setup</div>
+          <div class="proj-desc">Bash script to auto-configure Kali VMs with pentesting tools, aliases, and ZSH config.</div>
+          <div class="proj-tech"><span>Bash</span><span>Kali</span><span>VirtualBox</span></div>
+          <div class="proj-links"><a href="#">GitHub</a></div>
         </div>
-        <div class="output" style="margin-top:6px;color:var(--gray2);">
-          PING sivnsh7.in: 56 bytes of data<br>
-          64 bytes from sivnsh7.in: icmp_seq=0 ttl=64 time=<span style="color:var(--green);">1.337 ms</span><br>
-          <br>
-          <span style="color:var(--green);">1 packets transmitted, 1 received, 0% packet loss</span>
+        <div class="proj tilt-card">
+          <div class="proj-tag">WEB SEC</div>
+          <div class="proj-name">XSS Payload Gen</div>
+          <div class="proj-desc">Python tool that generates & tests XSS payloads with WAF bypass encoding options.</div>
+          <div class="proj-tech"><span>Python</span><span>Selenium</span><span>HTML</span></div>
+          <div class="proj-links"><a href="#">GitHub</a></div>
         </div>
-        <div class="line-gap"></div>
-        <div class="prompt-line">
-          <span class="p-user">root</span><span class="p-at">@</span><span class="p-host">sivnsh7</span><span class="p-colon">:</span><span class="p-path">~/contact</span><span class="p-hash">#</span>
-          <span class="blink"></span>
+        <div class="proj tilt-card">
+          <div class="proj-tag">RECON</div>
+          <div class="proj-name">Subdomain Enum</div>
+          <div class="proj-desc">Automated subdomain discovery using DNS brute-force, CT logs, and API integration.</div>
+          <div class="proj-tech"><span>Python</span><span>DNS</span><span>API</span></div>
+          <div class="proj-links"><a href="#">GitHub</a></div>
+        </div>
+        <div class="proj tilt-card">
+          <div class="proj-tag">CRYPTO</div>
+          <div class="proj-name">Hash Cracker</div>
+          <div class="proj-desc">Multi-algorithm hash identifier & cracker with rainbow table and wordlist support.</div>
+          <div class="proj-tech"><span>Python</span><span>Hashlib</span><span>Threading</span></div>
+          <div class="proj-links"><a href="#">GitHub</a></div>
+        </div>
+        <div class="proj tilt-card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:140px">
+          <div style="text-align:center;color:var(--gray)">
+            <div style="font-size:20px;margin-bottom:6px">+</div>
+            <div style="font-size:10px">more in /dev...</div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer>
-    <div>built with <span>♥</span> by <span>root@sivnsh7</span> — no frameworks harmed</div>
-    <div style="margin-top:6px;color:var(--green-dim);">[ pure html · pure css · pure js ]</div>
-  </footer>
-</div>
+    <!-- EXPERIENCE -->
+    <section id="exp" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">cat /var/log/experience.log</span><div class="sec-line"></div></div>
+      <div class="exp"><div class="exp-date">2026 — PRESENT</div><div class="exp-role">Independent Security Researcher</div><div class="exp-co">Self-Directed / Home Lab</div><div class="exp-desc">Running Kali in VM environments for pentesting. Studying OWASP Top 10, network protocols, and CTF challenges. Building automated recon scripts.</div></div>
+      <div class="exp"><div class="exp-date">2025 — PRESENT</div><div class="exp-role">CTF Participant</div><div class="exp-co">TryHackMe / HackTheBox / CTFtime</div><div class="exp-desc">Solving challenges in web exploitation, cryptography, forensics, and reverse engineering through guided and black-box environments.</div></div>
+      <div class="exp"><div class="exp-date">2024 — 2025</div><div class="exp-role">Self-Taught Developer</div><div class="exp-co">Personal Projects / GitHub</div><div class="exp-desc">Started with Python & Bash scripting. Built web tools, portfolio sites, and utility scripts. Learned Git, Linux admin, and networking.</div></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="sec fi">
+      <div class="sec-h"><span class="sec-cmd">$</span><span class="sec-t">netstat -connect</span><div class="sec-line"></div></div>
+      <div class="contact-grid stag">
+        <a class="contact-item" href="https://github.com/sivnsh7" target="_blank"><div class="c-ico">⌘</div><div><div class="c-lbl">GITHUB</div><div class="c-val">github.com/sivnsh7</div></div></a>
+        <a class="contact-item" href="mailto:sivnsh7@gmail.com"><div class="c-ico">✉</div><div><div class="c-lbl">EMAIL</div><div class="c-val">sivnsh7@gmail.com</div></div></a>
+        <a class="contact-item" href="https://t.me/sivnsh" target="_blank"><div class="c-ico">◈</div><div><div class="c-lbl">TELEGRAM</div><div class="c-val">t.me/sivnsh</div></div></a>
+        <a class="contact-item" href="https://www.instagram.com/sivnsh7.in" target="_blank"><div class="c-ico">◉</div><div><div class="c-lbl">INSTAGRAM</div><div class="c-val">@sivnsh7.in</div></div></a>
+      </div>
+
+      <!-- EDEX BOTTOM TERMINAL -->
+      <div class="edex-bottom" style="margin-top:14px">
+        <div class="term-bar"><div class="term-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="term-ttl">bash — msg.sh</div></div>
+        <div class="term-bd">
+          <div class="ps1"><span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~/contact</span><span class="ha">#</span><span class="cmd">echo "Want to collab or talk tech?"</span></div>
+          <div class="out g" style="margin-top:4px">Want to collab or talk tech?</div>
+          <div class="gap"></div>
+          <div class="ps1"><span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~/contact</span><span class="ha">#</span><span class="cmd">ping sivnsh7.in -c 1</span></div>
+          <div class="out" style="margin-top:4px;font-size:10px">
+            64 bytes from sivnsh7.in: icmp_seq=0 ttl=64 time=<span style="color:var(--green)">1.337 ms</span><br>
+            <span style="color:var(--green)">1 packets transmitted, 1 received, 0% loss</span>
+          </div>
+          <div class="gap"></div>
+          <div class="ps1"><span class="u">root</span><span class="at">@</span><span class="h">sivnsh7</span><span class="c">:</span><span class="d">~/contact</span><span class="ha">#</span><span class="blink-cursor"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>built with <span>♥</span> by <span>root@sivnsh7</span> — no frameworks harmed</div>
+      <div style="margin-top:4px;color:var(--green-dim)">[ pure html · css · js · kali vibes ]</div>
+      <div style="margin-top:4px">© <span id="yr">2025</span> sivnsh7</div>
+    </footer>
+  </main>
+
+  <!-- RIGHT PANEL - SYSTEM MONITOR -->
+  <aside class="edex-side" id="right-panel">
+    <div class="edex-side-header">SYSTEM MONITOR</div>
+    <div class="edex-side-body">
+      <div class="sys-monitor-item"><div class="sys-label"><span>CPU</span><span id="cpu-pct">67%</span></div><div class="sys-bar"><div class="sys-bar-fill cpu" id="cpu-bar"></div></div></div>
+      <div class="sys-monitor-item"><div class="sys-label"><span>MEM</span><span id="mem-pct">45%</span></div><div class="sys-bar"><div class="sys-bar-fill mem" id="mem-bar"></div></div></div>
+      <div class="sys-monitor-item"><div class="sys-label"><span>DISK</span><span>72%</span></div><div class="sys-bar"><div class="sys-bar-fill disk"></div></div></div>
+      <div class="sys-monitor-item"><div class="sys-label"><span>NET</span><span>33%</span></div><div class="sys-bar"><div class="sys-bar-fill net"></div></div></div>
+      <div class="sys-monitor-item"><div class="sys-label"><span>GPU</span><span>58%</span></div><div class="sys-bar"><div class="sys-bar-fill gpu"></div></div></div>
+      <div class="sys-monitor-item"><div class="sys-label"><span>SWAP</span><span>21%</span></div><div class="sys-bar"><div class="sys-bar-fill swap"></div></div></div>
+    </div>
+    <div class="edex-side-header" style="margin-top:6px">NETWORK</div>
+    <div class="edex-side-body">
+      <div class="net-activity">
+        <div>↑ TX: <span class="up" id="tx">0.0 KB/s</span></div>
+        <div>↓ RX: <span class="down" id="rx">0.0 KB/s</span></div>
+        <div style="margin-top:6px;color:var(--gray)">IFACE: eth0</div>
+        <div style="color:var(--gray)">IP: 192.168.1.<span style="color:var(--green)">7</span></div>
+        <div style="color:var(--gray)">GW: 192.168.1.1</div>
+        <div style="color:var(--gray)">DNS: 8.8.8.8</div>
+        <div style="margin-top:6px;color:var(--gray)">CONN: <span style="color:var(--green)">ESTABLISHED</span></div>
+        <div style="color:var(--gray)">PORTS: <span style="color:var(--yellow)" id="open-ports">22,80,443</span></div>
+      </div>
+    </div>
+    <div class="edex-side-header" style="margin-top:6px">ACTIVE SESSIONS</div>
+    <div class="edex-side-body">
+      <div style="font-size:9px;color:var(--gray2);line-height:2">
+        <div>pts/0 <span style="color:var(--green)">root</span> bash</div>
+        <div>pts/1 <span style="color:var(--green)">root</span> nmap</div>
+        <div>pts/2 <span style="color:var(--green)">root</span> python3</div>
+        <div>tty1 <span style="color:var(--green)">root</span> login</div>
+      </div>
+    </div>
+    <div class="edex-side-header" style="margin-top:6px">HISTORY</div>
+    <div class="edex-side-body">
+      <div style="font-size:8px;color:var(--gray);line-height:1.9" id="cmd-history">
+        <div>$ nmap -sV target</div>
+        <div>$ msfconsole -q</div>
+        <div>$ gobuster dir -u x</div>
+        <div>$ sqlmap -u x --dbs</div>
+        <div>$ hydra -l admin</div>
+        <div>$ john hash.txt</div>
+        <div>$ ssh root@10.10.x</div>
+        <div>$ curl -s target</div>
+      </div>
+    </div>
+  </aside>
 </div>
 
 <script>
-// ---- CURSOR ----
-const cursor = document.getElementById('cursor');
-const cursorDot = document.getElementById('cursorDot');
-let mx = 0, my = 0, cx = 0, cy = 0;
+/* ============================
+   BOOT SEQUENCE
+   ============================ */
+const bLines=[
+  {t:'[    0.000000] Linux version 6.6.0-kali1-amd64 (root@kali)',c:''},
+  {t:'[    0.001234] Command line: BOOT_IMAGE=/vmlinuz root=/dev/sda1',c:''},
+  {t:'[    0.012456] BIOS-e820: [mem 0x0000-0x9fbff] usable',c:''},
+  {t:'[    0.024000] Booting paravirtualized kernel on KVM',c:''},
+  {t:'[    0.036000] Memory: 16384MB DDR4 available',c:''},
+  {t:'[    0.048000] CPU: AMD Ryzen 7 5800X (8 cores)',c:''},
+  {t:'[    0.060000] Calibrating delay loop... 7200.00 BogoMIPS',c:''},
+  {t:'[    0.072000] Mount-cache hash table (4096 entries)',c:''},
+  {t:'[    0.084000] systemd[1]: Detected virtualization kvm.',c:''},
+  {t:'[    0.096000] systemd[1]: Set hostname to <sivnsh7>.',c:''},
+  {t:'[  OK  ] Started Network Manager.',c:'ok'},
+  {t:'[  OK  ] Started OpenSSH Server.',c:'ok'},
+  {t:'[  OK  ] Started Apache2 Web Server.',c:'ok'},
+  {t:'[  OK  ] Started PostgreSQL Database.',c:'ok'},
+  {t:'[  OK  ] Loading offensive security modules...',c:'ok'},
+  {t:'[  OK  ] Initializing nmap, metasploit, burpsuite...',c:'ok'},
+  {t:'[  OK  ] Loading wordlists: rockyou.txt, common.txt...',c:'ok'},
+  {t:'[  OK  ] VPN tunnel established.',c:'ok'},
+  {t:'[  OK  ] Firewall rules loaded (iptables).',c:'ok'},
+  {t:'[WARN ] Unauthorized access attempt from 192.168.1.105',c:'warn'},
+  {t:'[  OK  ] Intrusion detection system active.',c:'ok'},
+  {t:'[  OK  ] Portfolio server started on port 443.',c:'ok'},
+  {t:'',c:''},
+  {t:'████ KALI LINUX READY ████ root@sivnsh7 ████',c:'hl'},
+];
 
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+const bootEl=document.getElementById('boot-lines');
+const bootFill=document.getElementById('boot-fill');
+const bootPct=document.getElementById('boot-pct');
+const bootAccess=document.getElementById('boot-access');
+let bi=0;
 
-function animCursor() {
-  cx += (mx - cx) * 0.12;
-  cy += (my - cy) * 0.12;
-  cursor.style.left = cx + 'px';
-  cursor.style.top = cy + 'px';
-  cursorDot.style.left = mx + 'px';
-  cursorDot.style.top = my + 'px';
-  requestAnimationFrame(animCursor);
-}
-animCursor();
-
-document.querySelectorAll('a, button, .project-card, .skill-category').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1.8)'; });
-  el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
-});
-
-// ---- PARTICLES ----
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-for (let i = 0; i < 60; i++) {
-  particles.push({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    r: Math.random() * 1.2 + 0.2,
-    vx: (Math.random() - 0.5) * 0.2,
-    vy: (Math.random() - 0.5) * 0.2,
-    a: Math.random() * 0.4 + 0.1
-  });
-}
-
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(57,255,20,${p.a})`;
-    ctx.fill();
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0) p.x = canvas.width;
-    if (p.x > canvas.width) p.x = 0;
-    if (p.y < 0) p.y = canvas.height;
-    if (p.y > canvas.height) p.y = 0;
-  });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
-
-// ---- FADE IN ON SCROLL ----
-// Mark body so CSS can hide elements (progressive enhancement)
-document.body.classList.add('js-loaded');
-
-const fadeEls = document.querySelectorAll('.fade-in');
-
-// Fallback: if IntersectionObserver fails or page is local file, show everything after 300ms
-const fallbackTimer = setTimeout(() => {
-  fadeEls.forEach(el => el.classList.add('visible'));
-}, 300);
-
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
-
-  fadeEls.forEach(el => observer.observe(el));
-
-  // Hero always visible immediately
-  const hero = document.querySelector('#hero');
-  if (hero) { hero.classList.add('visible'); clearTimeout(fallbackTimer); }
-
-  // Also clear fallback if first elements become visible quickly
-  setTimeout(() => clearTimeout(fallbackTimer), 100);
-} else {
-  // No IntersectionObserver support — show everything
-  fadeEls.forEach(el => el.classList.add('visible'));
-  clearTimeout(fallbackTimer);
-}
-
-// ---- SKILL BARS ----
-const barObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.skill-bar-wrap').forEach(wrap => {
-        const level = wrap.dataset.level;
-        wrap.querySelector('.skill-bar-fill').style.width = level + '%';
-      });
-      barObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.3 });
-const skillSection = document.getElementById('skill-bars');
-if (skillSection) barObserver.observe(skillSection);
-
-// ---- 3D TILT ----
-document.querySelectorAll('.tilt-card').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    card.style.transform = `perspective(600px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateZ(4px)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = 'perspective(600px) rotateX(0) rotateY(0) translateZ(0)';
-  });
-});
-
-// ---- TYPING SIMULATION ----
-// Random glitch effect on title occasionally
-setInterval(() => {
-  const title = document.querySelector('.term-title');
-  if (title && Math.random() < 0.1) {
-    const orig = title.textContent;
-    title.style.color = 'var(--red)';
-    setTimeout(() => { title.style.color = ''; }, 80);
+function bootSeq(){
+  if(bi<bLines.length){
+    const d=document.createElement('div');
+    d.className='bl';
+    const {t,c}=bLines[bi];
+    if(c==='ok') d.innerHTML=t.replace('[  OK  ]','<span class="ok">[  OK  ]</span>');
+    else if(c==='warn') d.innerHTML=t.replace('[WARN ]','<span class="warn">[WARN ]</span>');
+    else if(c==='hl'){d.innerHTML='<span class="hl">'+t+'</span>';d.style.fontWeight='700';}
+    else d.textContent=t;
+    bootEl.appendChild(d);
+    requestAnimationFrame(()=>d.classList.add('show'));
+    bootEl.scrollTop=bootEl.scrollHeight;
+    const pct=Math.round(((bi+1)/bLines.length)*100);
+    bootFill.style.width=pct+'%';
+    bootPct.textContent=pct+'%';
+    bi++;
+    setTimeout(bootSeq,80+Math.random()*80);
+  } else {
+    bootAccess.classList.add('show');
+    setTimeout(()=>document.getElementById('boot').classList.add('done'),1400);
   }
-}, 3000);
+}
+setTimeout(bootSeq,400);
 
-// ---- NAV ACTIVE HIGHLIGHT ----
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll', () => {
-  let cur = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 80) cur = s.id;
+/* ============================
+   MATRIX RAIN
+   ============================ */
+const mCv=document.getElementById('matrix');
+const mCx=mCv.getContext('2d');
+function mResize(){mCv.width=innerWidth;mCv.height=innerHeight}
+mResize();addEventListener('resize',mResize);
+const mChars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[]$#@!';
+const fSz=13;
+let mCols=Math.floor(mCv.width/fSz);
+let mDrops=Array(mCols).fill(0).map(()=>Math.random()*-100);
+
+function drawMatrix(){
+  mCx.fillStyle='rgba(0,0,0,0.04)';
+  mCx.fillRect(0,0,mCv.width,mCv.height);
+  mCx.font=fSz+'px monospace';
+  for(let i=0;i<mDrops.length;i++){
+    const ch=mChars[Math.floor(Math.random()*mChars.length)];
+    const brightness=Math.random();
+    mCx.fillStyle=brightness>.9?'#fff':brightness>.7?'#39ff14':'#0f3300';
+    mCx.fillText(ch,i*fSz,mDrops[i]*fSz);
+    if(mDrops[i]*fSz>mCv.height&&Math.random()>.975)mDrops[i]=0;
+    mDrops[i]++;
+  }
+  requestAnimationFrame(drawMatrix);
+}
+drawMatrix();
+addEventListener('resize',()=>{mCols=Math.floor(mCv.width/fSz);mDrops=Array(mCols).fill(0).map(()=>Math.random()*-100)});
+
+/* ============================
+   PARTICLES + CONNECTIONS
+   ============================ */
+const pCv=document.getElementById('particles');
+const pCx=pCv.getContext('2d');
+let pts=[];
+function pResize(){pCv.width=innerWidth;pCv.height=innerHeight}
+pResize();addEventListener('resize',pResize);
+
+for(let i=0;i<50;i++)pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.2+.2,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.3+.1});
+
+function drawPts(){
+  pCx.clearRect(0,0,pCv.width,pCv.height);
+  for(let i=0;i<pts.length;i++){
+    for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){pCx.beginPath();pCx.moveTo(pts[i].x,pts[i].y);pCx.lineTo(pts[j].x,pts[j].y);pCx.strokeStyle=`rgba(57,255,20,${.04*(1-d/100)})`;pCx.lineWidth=.5;pCx.stroke()}
+    }
+  }
+  pts.forEach(p=>{
+    pCx.beginPath();pCx.arc(p.x,p.y,p.r,0,Math.PI*2);pCx.fillStyle=`rgba(57,255,20,${p.a})`;pCx.fill();
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=pCv.width;if(p.x>pCv.width)p.x=0;
+    if(p.y<0)p.y=pCv.height;if(p.y>pCv.height)p.y=0;
   });
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--green)' : '';
+  requestAnimationFrame(drawPts);
+}
+drawPts();
+
+/* ============================
+   CURSOR
+   ============================ */
+const cur=document.getElementById('cur'),curD=document.getElementById('curDot');
+let mx=0,my=0,cx2=0,cy2=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+function aCur(){
+  cx2+=(mx-cx2)*.1;cy2+=(my-cy2)*.1;
+  cur.style.left=cx2+'px';cur.style.top=cy2+'px';
+  curD.style.left=mx+'px';curD.style.top=my+'px';
+  requestAnimationFrame(aCur);
+}
+aCur();
+
+document.querySelectorAll('a,button,.proj,.sk-cat,.hex,.net-node,.contact-item,.badge,.stat-box').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('hover'));
+});
+
+/* ============================
+   CLOCK
+   ============================ */
+function updateClock(){
+  const d=new Date();
+  document.getElementById('clock').textContent=d.toLocaleTimeString('en-GB');
+  document.getElementById('pid').textContent=Math.floor(1000+Math.random()*9000);
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* ============================
+   LIVE SYSTEM MONITOR
+   ============================ */
+function updateSys(){
+  const cpu=40+Math.random()*40;
+  const mem=35+Math.random()*30;
+  document.getElementById('cpu-bar').style.width=cpu+'%';
+  document.getElementById('cpu-pct').textContent=Math.round(cpu)+'%';
+  document.getElementById('mem-bar').style.width=mem+'%';
+  document.getElementById('mem-pct').textContent=Math.round(mem)+'%';
+  document.getElementById('tx').textContent=(Math.random()*500).toFixed(1)+' KB/s';
+  document.getElementById('rx').textContent=(Math.random()*2000).toFixed(1)+' KB/s';
+  const ports=['22','80','443','8080','3306','5432','8443','9090'];
+  const active=ports.sort(()=>Math.random()-.5).slice(0,3+Math.floor(Math.random()*3));
+  document.getElementById('open-ports').textContent=active.join(',');
+}
+setInterval(updateSys,2000);
+updateSys();
+
+/* ============================
+   SCROLL PROGRESS + NAV + BTT
+   ============================ */
+const navLinks=document.querySelectorAll('.edex-topbar-nav a');
+const secs=document.querySelectorAll('section[id]');
+addEventListener('scroll',()=>{
+  const st=document.documentElement.scrollTop;
+  const sh=document.documentElement.scrollHeight-innerHeight;
+  document.getElementById('scroll-prog').style.width=(st/sh)*100+'%';
+  document.getElementById('btt').classList.toggle('show',st>300);
+  let cur2='';
+  secs.forEach(s=>{if(st>=s.offsetTop-80)cur2=s.id});
+  navLinks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur2)});
+});
+
+/* ============================
+   FADE IN / STAGGER
+   ============================ */
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.08});
+document.querySelectorAll('.fi,.stag').forEach(el=>obs.observe(el));
+
+/* ============================
+   SKILL BARS
+   ============================ */
+const sbObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.skb-wrap').forEach((w,i)=>{setTimeout(()=>{w.querySelector('.skb-fill').style.width=w.dataset.level+'%'},i*120)});sbObs.unobserve(e.target)}})},{threshold:.3});
+const sbEl=document.getElementById('skill-bars');
+if(sbEl)sbObs.observe(sbEl);
+
+/* ============================
+   3D TILT
+   ============================ */
+document.querySelectorAll('.tilt-card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    c.style.transform=`perspective(600px) rotateX(${-y*10}deg) rotateY(${x*10}deg) translateZ(6px)`;
   });
+  c.addEventListener('mouseleave',()=>{c.style.transform='perspective(600px) rotateX(0) rotateY(0) translateZ(0)'});
+});
+
+/* ============================
+   COUNTER STATS
+   ============================ */
+function countUp(el,target,dur=1800){
+  let s=0;const step=target/(dur/16);
+  function u(){s+=step;if(s>=target){el.textContent=target;return}el.textContent=Math.floor(s);requestAnimationFrame(u)}
+  u();
+}
+const stObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
+  for(let i=1;i<=6;i++){const el=document.getElementById('s'+i);if(el)countUp(el,+el.dataset.target)}
+  stObs.unobserve(e.target);
+}})},{threshold:.3});
+const stSec=document.getElementById('stats-section');
+if(stSec)stObs.observe(stSec);
+
+/* ============================
+   HERO AUTO-TYPING
+   ============================ */
+const cmds=[
+  {c:'nmap -sV -sC 192.168.1.0/24',o:'254 hosts scanned. 12 open ports. 3 vulnerabilities found.'},
+  {c:'msfconsole -q -x "search eternalblue"',o:'exploit/windows/smb/ms17_010_eternalblue — Excellent'},
+  {c:'python3 recon.py --target sivnsh7.in',o:'7 subdomains found. 4 alive. Port scan complete.'},
+  {c:'sqlmap -u "http://target/page?id=1" --dbs',o:'[INFO] database: users, admin, backup — 3 databases found'},
+  {c:'hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt',o:'Cracked: 5f4dcc3b5aa765d61d → password123'},
+  {c:'gobuster dir -u http://target -w common.txt -t 50',o:'/admin /login /api /backup /uploads — Status: 200'},
+  {c:'hydra -l admin -P pass.txt ssh://10.10.10.1',o:'[22][ssh] host: 10.10.10.1 login: admin password: r00t!'},
+  {c:'curl -s http://target/.env',o:'DB_PASSWORD=s3cret_k3y APP_DEBUG=true'},
+];
+let ci=0;
+const cmdEl=document.getElementById('auto-cmd');
+const outEl=document.getElementById('auto-out');
+
+function typeCmd(){
+  const{c,o}=cmds[ci%cmds.length];
+  cmdEl.textContent='';outEl.textContent='';
+  let i=0;
+  function tc(){
+    if(i<c.length){cmdEl.textContent+=c[i];i++;setTimeout(tc,30+Math.random()*25)}
+    else setTimeout(()=>{outEl.textContent=o;setTimeout(()=>{ci++;typeCmd()},2500)},400);
+  }
+  tc();
+}
+setTimeout(typeCmd,4500);
+
+/* ============================
+   THREAT MAP
+   ============================ */
+const tCv=document.getElementById('threat-cv');
+const tCx=tCv.getContext('2d');
+const log=document.getElementById('live-log');
+let tDots=[];
+function tResize(){const p=tCv.parentElement;tCv.width=p.offsetWidth;tCv.height=p.offsetHeight}
+tResize();addEventListener('resize',tResize);
+
+const tIPs=['192.168.1.105','10.0.0.23','172.16.0.45','203.0.113.42','198.51.100.7','45.33.32.156','104.26.10.78','185.199.108.153','8.8.4.4','1.1.1.1'];
+const tTypes=['PORT_SCAN','BRUTE_FORCE','SQL_INJECTION','XSS_PROBE','DIR_TRAVERSAL','RCE_ATTEMPT','PHISHING','DNS_EXFIL','CRED_STUFF','PRIV_ESC'];
+
+function addThreat(){
+  const x=Math.random()*tCv.width,y=Math.random()*tCv.height;
+  const red=Math.random()>.5;
+  tDots.push({x,y,r:2,maxR:25+Math.random()*20,a:1,red,spd:.6+Math.random()*.4});
+  const ip=tIPs[Math.floor(Math.random()*tIPs.length)];
+  const ty=tTypes[Math.floor(Math.random()*tTypes.length)];
+  const t=new Date().toLocaleTimeString('en-GB');
+  const d=document.createElement('div');
+  d.innerHTML=`<span style="color:var(--gray)">[${t}]</span> <span style="color:${red?'var(--red)':'var(--green)'}">${ty}</span> from <span style="color:var(--yellow)">${ip}</span> :${Math.floor(Math.random()*65535)}`;
+  log.appendChild(d);log.scrollTop=log.scrollHeight;
+  if(log.children.length>40)log.removeChild(log.firstChild);
+}
+
+function drawThreat(){
+  tCx.clearRect(0,0,tCv.width,tCv.height);
+  tCx.strokeStyle='rgba(57,255,20,.04)';tCx.lineWidth=.5;
+  for(let x=0;x<tCv.width;x+=25){tCx.beginPath();tCx.moveTo(x,0);tCx.lineTo(x,tCv.height);tCx.stroke()}
+  for(let y=0;y<tCv.height;y+=25){tCx.beginPath();tCx.moveTo(0,y);tCx.lineTo(tCv.width,y);tCx.stroke()}
+
+  tDots=tDots.filter(d=>d.a>.01);
+  tDots.forEach(d=>{
+    d.r+=d.spd;d.a=1-(d.r/d.maxR);
+    const clr=d.red?[255,51,51]:[57,255,20];
+    tCx.beginPath();tCx.arc(d.x,d.y,d.r,0,Math.PI*2);
+    tCx.strokeStyle=`rgba(${clr},${d.a*.4})`;tCx.lineWidth=1;tCx.stroke();
+    tCx.beginPath();tCx.arc(d.x,d.y,2,0,Math.PI*2);
+    tCx.fillStyle=`rgba(${clr},${d.a})`;tCx.fill();
+  });
+  requestAnimationFrame(drawThreat);
+}
+drawThreat();
+setInterval(addThreat,1200);
+
+/* ============================
+   GLITCH TITLE EFFECT
+   ============================ */
+setInterval(()=>{
+  document.querySelectorAll('.term-ttl').forEach(t=>{
+    if(Math.random()<.08){t.style.color='var(--red)';setTimeout(()=>t.style.color='',60)}
+  });
+},2500);
+
+/* ============================
+   KONAMI CODE EASTER EGG
+   ============================ */
+let kSeq=[];
+const kCode=[38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown',e=>{
+  kSeq.push(e.keyCode);if(kSeq.length>10)kSeq.shift();
+  if(kSeq.join(',')==kCode.join(',')){
+    document.body.style.filter='hue-rotate(120deg) saturate(2)';
+    setTimeout(()=>document.body.style.filter='',4000);
+    kSeq=[];
+  }
+});
+
+/* ============================
+   FOOTER YEAR
+   ============================ */
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+/* ============================
+   INTERACTIVE CUBE (MOUSE)
+   ============================ */
+const cube3d=document.getElementById('cube3d');
+let cubeHover=false;
+cube3d.parentElement.addEventListener('mouseenter',()=>cubeHover=true);
+cube3d.parentElement.addEventListener('mouseleave',()=>{cubeHover=false;cube3d.style.animation='cube-spin 16s linear infinite'});
+cube3d.parentElement.addEventListener('mousemove',e=>{
+  if(!cubeHover)return;
+  cube3d.style.animation='none';
+  const r=cube3d.parentElement.getBoundingClientRect();
+  const x=((e.clientX-r.left)/r.width-.5)*360;
+  const y=((e.clientY-r.top)/r.height-.5)*360;
+  cube3d.style.transform=`rotateX(${-y}deg) rotateY(${x}deg)`;
 });
 </script>
 </body>
