@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page not found | sivnsh7.in</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* Light theme – premium, warm */
+            --bg: #F9F8F6;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(0, 0, 0, 0.04);
+            --text-primary: #1E1E1E;
+            --text-secondary: #6B6B6B;
+            --accent: #9B8E7E;
+            --accent-soft: rgba(155, 142, 126, 0.12);
+            --toggle-bg: rgba(0, 0, 0, 0.05);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+            --glow-color: rgba(155, 142, 126, 0.3);
+            --grid-opacity: 0.02;
+            --grid-line: rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1A1A1A;
+            --card-bg: rgba(36, 36, 36, 0.7);
+            --card-border: rgba(255, 255, 255, 0.04);
+            --text-primary: #E5E5E5;
+            --text-secondary: #8A8A8A;
+            --accent: #C9B99A;
+            --accent-soft: rgba(201, 185, 154, 0.1);
+            --toggle-bg: rgba(255, 255, 255, 0.08);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            --glow-color: rgba(201, 185, 154, 0.25);
+            --grid-opacity: 0.03;
+            --grid-line: rgba(255,255,255,0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.5s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle grid texture */
+        .bg-texture {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: var(--grid-opacity);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--toggle-bg);
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .theme-toggle:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* 404 large animated number */
+        .error-number {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(7rem, 15vw, 10rem);
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            letter-spacing: -2px;
+            user-select: none;
+            animation: floatNumber 4s ease-in-out infinite;
+            transition: text-shadow 0.3s ease, transform 0.3s ease;
+            position: relative;
+            cursor: default;
+            text-shadow: 0 0 30px var(--glow-color);
+        }
+        .error-number:hover {
+            animation: glitchEffect 0.3s ease-in-out;
+            text-shadow: 0 0 40px var(--glow-color);
+        }
+
+        @keyframes floatNumber {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes glitchEffect {
+            0% { transform: translate(0); }
+            20% { transform: translate(-4px, 2px); }
+            40% { transform: translate(4px, -2px); }
+            60% { transform: translate(-2px, -1px); }
+            80% { transform: translate(2px, 1px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Glass card */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+            background: var(--accent-soft);
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .message {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 300px;
+            margin: 0 auto 20px;
+            opacity: 0.9;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: opacity 0.3s ease, gap 0.3s ease;
+            margin-bottom: 18px;
+        }
+        .home-link:hover {
+            opacity: 0.8;
+            gap: 10px;
+        }
+        .home-link i {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+        .home-link:hover i {
+            transform: translateX(-3px);
+        }
+
+        /* Social row */
+        .social-links {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .social-link {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: color 0.25s ease, transform 0.2s ease;
+            text-decoration: none;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-link:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            letter-spacing: 0.3px;
+        }
+        .footer span {
+            font-weight: 500;
+            color: var(--accent);
+        }
+        .divider {
+            width: 20px;
+            height: 1px;
+            background: var(--accent);
+            margin: 12px auto;
+            opacity: 0.4;
+        }
+
+        @media (max-width: 460px) {
+            .card {
+                padding: 28px 18px;
+                border-radius: 16px;
+            }
+            .error-number {
+                font-size: 5rem;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .theme-toggle {
+                top: 16px;
+                right: 16px;
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="bg-texture"></div>
+
+    <!-- Theme toggle button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+    </button>
+
+    <div class="container">
+        <!-- Animated 404 -->
+        <div class="error-number" title="You seem lost, but it's okay.">404</div>
+
+        <!-- Card with message -->
+        <div class="card">
+            <div class="status-badge">route not found</div>
+            <h1>Dead end. Nice view, though.</h1>
+            <p class="message">
+                This endpoint returned a 404. No worries — even the cleanest codebases have broken links. 
+                Let's get you back on track.
+            </p>
+
+            <!-- Back to home -->
+            <a href="/" class="home-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to base
+            </a>
+
+            <!-- Social (your personal links) -->
+            <div class="social-links">
+                <a href="https://github.com/sivnsh7" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a href="https://instagram.com/sivnsh7.in" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://twitter.com/sivnsh7" target="_blank" rel="noopener" class="social-link" aria-label="Twitter">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="mailto:sivnsh7@gmail.com" class="social-link" aria-label="Email">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+
+            <div class="divider"></div>
+            <p class="footer">
+                &copy; <span id="currentYear"></span> All Rights Reserved — <span>sivnsh7.in</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const html = document.documentElement;
+            const toggleBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const yearSpan = document.getElementById('currentYear');
+            
+            yearSpan.textContent = new Date().getFullYear();
+
+            // Theme management
+            const saved = localStorage.getItem('sivnsh7-404-theme') || 'light';
+            setTheme(saved);
+
+            toggleBtn.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                setTheme(next);
+                localStorage.setItem('sivnsh7-404-theme', next);
+                // Button feedback
+                toggleBtn.style.transform = 'scale(0.9)';
+                setTimeout(() => { toggleBtn.style.transform = ''; }, 150);
+            });
+
+            function setTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                themeIcon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+
+            // Console easter egg
+            console.log('%c 404 %c• sivnsh7.in %c— nothing to see here',
+                'font-size:1.2rem; font-weight:bold; color:#9B8E7E;',
+                'color:#6B6B6B;',
+                'color:#9B8E7E;');
+        })();
+    </script>
+</body>
+</html>
