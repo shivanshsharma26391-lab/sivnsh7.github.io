@@ -1,354 +1,1145 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance | sivnsh7.in</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivansh — Security Research, Recon & Automation | sivnsh7</title>
+<meta name="description" content="Shivansh (sivnsh7) — self-taught security researcher and builder. Recon automation, Linux tooling, and responsible disclosure, documented in public. Built from Termux on a Samsung M35.">
+<meta property="og:title" content="Shivansh — Security Research, Recon & Automation">
+<meta property="og:description" content="Self-taught security researcher and builder. Recon automation, Linux tooling, and responsible disclosure — documented in public.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sivnsh7.in">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#F9F8F6">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        :root {
-            /* Light theme – soft, warm, premium */
-            --bg: #F9F8F6;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --card-border: rgba(0, 0, 0, 0.04);
-            --text-primary: #1E1E1E;
-            --text-secondary: #6B6B6B;
-            --accent: #9B8E7E;
-            --accent-soft: rgba(155, 142, 126, 0.12);
-            --icon-bg: rgba(0, 0, 0, 0.03);
-            --icon-border: rgba(0, 0, 0, 0.06);
-            --toggle-bg: rgba(0, 0, 0, 0.05);
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
-            --gear-stroke: #9B8E7E;
-        }
+<script>
+/* No flash of wrong theme */
+(function(){
+  try{
+    var saved = localStorage.getItem('sivnsh7-theme');
+    if(saved === 'dark' || saved === 'light'){
+      document.documentElement.setAttribute('data-theme', saved);
+    } else {
+      var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefers ? 'dark' : 'light');
+    }
+  }catch(e){}
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+})();
+</script>
 
-        [data-theme="dark"] {
-            --bg: #1A1A1A;
-            --card-bg: rgba(36, 36, 36, 0.7);
-            --card-border: rgba(255, 255, 255, 0.04);
-            --text-primary: #E5E5E5;
-            --text-secondary: #8A8A8A;
-            --accent: #C9B99A;
-            --accent-soft: rgba(201, 185, 154, 0.1);
-            --icon-bg: rgba(255, 255, 255, 0.04);
-            --icon-border: rgba(255, 255, 255, 0.06);
-            --toggle-bg: rgba(255, 255, 255, 0.08);
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            --gear-stroke: #C9B99A;
-        }
+<style>
+/* ============================================================
+   TOKENS — same system as sivnsh7.in/404 and /maintenance
+   ============================================================ */
+:root{
+  --bg: #F9F8F6;
+  --bg-raised: #F2F0EB;
+  --card-bg: rgba(255,255,255,0.7);
+  --card-solid: #FFFFFF;
+  --card-border: rgba(0,0,0,0.06);
+  --text-primary: #1E1E1E;
+  --text-secondary: #6B6B6B;
+  --text-faint: #9A9A9A;
+  --accent: #9B8E7E;
+  --accent-2: #B5A688;
+  --accent-soft: rgba(155,142,126,0.12);
+  --accent-softer: rgba(155,142,126,0.06);
+  --toggle-bg: rgba(0,0,0,0.05);
+  --shadow: 0 8px 30px rgba(0,0,0,0.05);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.07);
+  --glow-color: rgba(155,142,126,0.35);
+  --grid-opacity: 0.025;
+  --grid-line: rgba(0,0,0,0.06);
+  --rust: #A85D3E;
+  --rust-soft: rgba(168,93,62,0.1);
+  --ok: #5E7C5A;
+  --ok-soft: rgba(94,124,90,0.1);
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --maxw: 1120px;
+  --radius: 18px;
+  --radius-sm: 10px;
+}
+[data-theme="dark"]{
+  --bg: #1A1A1A;
+  --bg-raised: #202020;
+  --card-bg: rgba(36,36,36,0.7);
+  --card-solid: #232323;
+  --card-border: rgba(255,255,255,0.06);
+  --text-primary: #E9E7E3;
+  --text-secondary: #9A9691;
+  --text-faint: #6E6A65;
+  --accent: #C9B99A;
+  --accent-2: #D8CBAE;
+  --accent-soft: rgba(201,185,154,0.12);
+  --accent-softer: rgba(201,185,154,0.06);
+  --toggle-bg: rgba(255,255,255,0.08);
+  --shadow: 0 8px 30px rgba(0,0,0,0.35);
+  --shadow-lg: 0 25px 70px rgba(0,0,0,0.45);
+  --glow-color: rgba(201,185,154,0.3);
+  --grid-opacity: 0.035;
+  --grid-line: rgba(255,255,255,0.05);
+  --rust: #C97B57;
+  --rust-soft: rgba(201,123,87,0.12);
+  --ok: #8FB489;
+  --ok-soft: rgba(143,180,137,0.12);
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; scroll-padding-top:96px; }
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text-primary);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background-color .5s ease,color .4s ease;
+  position:relative;
+}
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; }
+button{ font:inherit; background:none; border:none; cursor:pointer; color:inherit; }
+::selection{ background:var(--accent); color:#fff; }
+img,canvas,svg{ display:block; max-width:100%; }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.5s ease, color 0.4s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            position: relative;
-            overflow-x: hidden;
-        }
+.bg-texture{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:var(--grid-opacity);
+  background-image:linear-gradient(var(--grid-line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size:42px 42px;
+}
 
-        /* Subtle grid texture – very faint */
-        .bg-texture {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.02;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-        [data-theme="dark"] .bg-texture {
-            opacity: 0.03;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-        }
+.skip-link{
+  position:fixed; top:-60px; left:14px; z-index:999;
+  background:var(--accent); color:#fff; padding:10px 18px; border-radius:8px;
+  font-family:var(--font-display); font-size:.85rem; transition:top .25s ease;
+}
+.skip-link:focus{ top:14px; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
 
-        /* Main container */
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 420px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 32px;
-        }
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+code{
+  font-family:var(--font-display); font-size:.85em;
+  background:var(--accent-soft); color:var(--accent); padding:.15em .4em; border-radius:5px;
+}
 
-        /* Theme toggle – minimal icon button */
-        .theme-toggle {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--toggle-bg);
-            border: 1px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            z-index: 100;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-        .theme-toggle:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-            background: var(--accent-soft);
-        }
+/* ============ NAV ============ */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:150;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  background:color-mix(in srgb, var(--bg) 78%, transparent);
+  border-bottom:1px solid var(--card-border);
+  transition:transform .35s ease, background-color .4s ease, border-color .4s ease;
+}
+nav.hide{ transform:translateY(-100%); }
+.nav-inner{ max-width:var(--maxw); margin:0 auto; padding:0 24px; height:68px; display:flex; align-items:center; justify-content:space-between; }
+.brand{ font-family:var(--font-display); font-weight:600; font-size:1rem; display:flex; align-items:center; gap:9px; }
+.brand .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 12px var(--glow-color); }
+.nav-links{ display:flex; align-items:center; gap:6px; }
+.nav-links a{
+  font-size:.82rem; color:var(--text-secondary); padding:8px 13px; border-radius:8px;
+  transition:color .2s ease, background .2s ease;
+}
+.nav-links a:hover{ color:var(--text-primary); background:var(--accent-softer); }
+.nav-actions{ display:flex; align-items:center; gap:10px; }
+.icon-btn{
+  width:38px; height:38px; border-radius:50%; background:var(--toggle-bg);
+  display:flex; align-items:center; justify-content:center; color:var(--text-secondary);
+  font-size:.9rem; transition:all .25s ease; border:1px solid transparent;
+}
+.icon-btn:hover{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+.kbd-hint{
+  font-family:var(--font-display); font-size:.72rem; color:var(--text-faint);
+  border:1px solid var(--card-border); border-radius:8px; padding:7px 11px; background:var(--bg-raised);
+}
+.nav-toggle{ display:none; }
+@media(max-width:880px){
+  .nav-links{ display:none; }
+  .nav-toggle{ display:flex; flex-direction:column; gap:4px; width:38px; height:38px; align-items:center; justify-content:center; border-radius:50%; background:var(--toggle-bg); }
+  .nav-toggle span{ width:16px; height:1.5px; background:var(--text-primary); transition:transform .3s ease, opacity .3s ease; }
+  .nav-toggle.open span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2){ opacity:0; }
+  .nav-toggle.open span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+}
 
-        /* Gear icon – delicate outline */
-        .gear-wrapper {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.9;
-        }
-        .gear-wrapper svg {
-            width: 100%;
-            height: 100%;
-            stroke: var(--gear-stroke);
-            fill: none;
-            stroke-width: 1.5;
-            animation: slowRotate 25s linear infinite;
-        }
-        @keyframes slowRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+.mobile-nav{
+  position:fixed; inset:0; z-index:140; background:var(--bg);
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+  opacity:0; pointer-events:none; transition:opacity .3s ease;
+}
+.mobile-nav.open{ display:flex; opacity:1; pointer-events:auto; }
+.mobile-nav a{ font-family:var(--font-display); font-size:1.35rem; color:var(--text-secondary); }
+.mobile-nav a:hover{ color:var(--accent); }
 
-        /* Card – barely there glass effect */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 40px 32px;
-            width: 100%;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(12px);
-            animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* ============ PROGRESS ============ */
+#progress{ position:fixed; top:0; left:0; height:2px; width:0; background:var(--accent); z-index:200; box-shadow:0 0 8px var(--glow-color); }
 
-        .status-text {
-            font-size: 0.7rem;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 18px;
-        }
+/* ============ CURSOR ============ */
+#cursor{ position:fixed; width:8px; height:8px; border-radius:50%; background:var(--accent); pointer-events:none; z-index:250; transform:translate(-50%,-50%); transition:width .25s,height .25s,opacity .3s; opacity:0; }
+#cursor-ring{ position:fixed; width:34px; height:34px; border-radius:50%; border:1px solid var(--accent); opacity:0; pointer-events:none; z-index:249; transform:translate(-50%,-50%); transition:width .3s,height .3s,opacity .3s,border-color .3s; }
+body.cursor-on, body.cursor-on a, body.cursor-on button{ cursor:none; }
+#cursor.hover{ width:14px; height:14px; }
+#cursor-ring.hover{ width:56px; height:56px; }
 
-        h1 {
-            font-size: 1.6rem;
-            font-weight: 500;
-            letter-spacing: -0.3px;
-            line-height: 1.25;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+/* ============ SECTIONS ============ */
+section{ padding:118px 0; position:relative; }
+.eyebrow{
+  font-family:var(--font-display); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{ content:""; width:22px; height:1px; background:var(--accent); opacity:.7; }
+h2{ font-family:var(--font-display); font-size:clamp(1.8rem,3.6vw,2.6rem); font-weight:600; letter-spacing:-.01em; margin-bottom:20px; }
+.lead{ color:var(--text-secondary); max-width:640px; font-size:1.02rem; }
 
-        .description {
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            max-width: 280px;
-            margin: 0 auto 24px;
-            opacity: 0.85;
-        }
+/* ============ HERO ============ */
+#hero{ min-height:100vh; display:flex; align-items:center; position:relative; padding:140px 0 60px; overflow:hidden; }
+#scene{ position:absolute; inset:0; z-index:0; opacity:.9; }
+.hero-fade{ position:absolute; bottom:0; left:0; right:0; height:220px; background:linear-gradient(transparent, var(--bg)); z-index:1; pointer-events:none; }
+.hero-inner{ position:relative; z-index:2; }
+.hero-status{
+  font-family:var(--font-display); font-size:.72rem; letter-spacing:.04em; color:var(--text-secondary);
+  border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:9px; padding:7px 15px;
+  border-radius:99px; background:var(--card-bg); backdrop-filter:blur(10px); margin-bottom:28px;
+}
+.hero-status .pulse{ width:6px; height:6px; border-radius:50%; background:var(--accent); animation:pulse 2.4s infinite; }
+@keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 var(--glow-color);} 50%{ box-shadow:0 0 0 7px rgba(0,0,0,0);} }
+h1{
+  font-family:var(--font-display); font-weight:700; letter-spacing:-.03em; line-height:1.03;
+  font-size:clamp(2.6rem,7vw,5.4rem); margin-bottom:24px; max-width:15ch;
+}
+h1 .accent{ color:var(--accent); font-weight:600; }
+.hero-sub{ font-size:clamp(1.05rem,1.7vw,1.28rem); color:var(--text-primary); max-width:600px; margin-bottom:14px; font-weight:500; }
+.hero-support{ color:var(--text-secondary); max-width:560px; margin-bottom:40px; font-size:.98rem; }
+.hero-cta{ display:flex; gap:14px; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; gap:9px; padding:14px 26px; border-radius:12px;
+  font-family:var(--font-display); font-size:.9rem; font-weight:500; transition:transform .2s ease, background .2s ease, border-color .2s ease;
+  border:1px solid transparent;
+}
+.btn:active{ transform:scale(.97); }
+.btn-primary{ background:var(--accent); color:#fff; }
+[data-theme="dark"] .btn-primary{ color:#1A1A1A; }
+.btn-primary:hover{ background:var(--accent-2); }
+.btn-ghost{ border-color:var(--card-border); background:var(--card-bg); backdrop-filter:blur(10px); }
+.btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+.hero-coords{
+  margin-top:56px; display:flex; gap:28px; flex-wrap:wrap;
+  font-family:var(--font-display); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint);
+}
 
-        /* Social links – minimal, no backgrounds */
-        .social-links {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .social-link {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            transition: color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .social-link:hover {
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
+/* ============ GLASS CARD BASE ============ */
+.card{
+  background:var(--card-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--card-border); border-radius:var(--radius); box-shadow:var(--shadow);
+  transition:border-color .3s ease, transform .3s ease, background .3s ease;
+}
 
-        /* Footer */
-        .footer {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            letter-spacing: 0.3px;
-        }
-        .footer span {
-            font-weight: 500;
-            color: var(--accent);
-        }
-        .divider {
-            width: 20px;
-            height: 1px;
-            background: var(--accent);
-            margin: 12px auto;
-            opacity: 0.4;
-        }
+/* ============ INSTRUMENTS ============ */
+.instruments-grid{ display:grid; grid-template-columns:1.05fr 1fr; gap:60px; align-items:start; }
+.instruments-copy p{ color:var(--text-secondary); margin-bottom:18px; }
+.instruments-copy p:first-child{ color:var(--text-primary); font-size:1.05rem; }
+.spec-card{ padding:30px 30px 8px; }
+.spec-row{ display:flex; justify-content:space-between; gap:16px; padding:16px 0; border-bottom:1px solid var(--card-border); font-size:.88rem; }
+.spec-row:last-child{ border-bottom:none; }
+.spec-label{ font-family:var(--font-display); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); flex-shrink:0; }
+.spec-value{ text-align:right; font-weight:500; }
+.spec-value.accent{ color:var(--accent); }
+@media(max-width:880px){ .instruments-grid{ grid-template-columns:1fr; } }
 
-        @media (max-width: 460px) {
-            .card {
-                padding: 32px 20px;
-                border-radius: 16px;
-            }
-            h1 {
-                font-size: 1.4rem;
-            }
-            .container {
-                gap: 24px;
-            }
-            .gear-wrapper {
-                width: 44px;
-                height: 44px;
-            }
-            .theme-toggle {
-                top: 18px;
-                right: 18px;
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+/* ============ SURVEY / TERRAIN CARDS ============ */
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:44px; }
+.grid2{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:44px; }
+@media(max-width:920px){ .grid3{ grid-template-columns:repeat(2,1fr);} }
+@media(max-width:620px){ .grid3,.grid2{ grid-template-columns:1fr; } }
+.terrain-card{ padding:30px 26px; }
+.terrain-card:hover{ border-color:var(--accent); transform:translateY(-4px); }
+.terrain-card .tag-label{ font-family:var(--font-display); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); display:inline-block; padding:5px 11px; border-radius:7px; margin-bottom:18px; }
+.terrain-card h3{ font-family:var(--font-display); font-size:1.15rem; font-weight:600; margin-bottom:10px; }
+.terrain-card p{ color:var(--text-secondary); font-size:.9rem; }
+
+/* ============ FIELD REPORTS / PROJECTS ============ */
+.project{ margin-bottom:14px; overflow:hidden; }
+.project.open{ border-color:var(--accent); }
+.project-head{
+  width:100%; text-align:left; padding:26px 28px; display:flex; align-items:center;
+  justify-content:space-between; gap:20px;
+}
+.project-head-text h3{ font-family:var(--font-display); font-size:1.15rem; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.project-head-text p{ color:var(--text-secondary); font-size:.9rem; font-weight:400; }
+.status-pill{
+  font-family:var(--font-display); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 10px; border-radius:99px; flex-shrink:0;
+}
+.status-pill.active{ color:var(--ok); background:var(--ok-soft); }
+.status-pill.concept{ color:var(--text-secondary); background:var(--bg-raised); }
+.status-pill.side{ color:var(--rust); background:var(--rust-soft); }
+.chev{ flex-shrink:0; color:var(--text-faint); font-size:1.1rem; transition:transform .3s ease, color .3s ease; }
+.project.open .chev{ transform:rotate(45deg); color:var(--accent); }
+.project-body{ max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.4,0,.2,1); }
+.project-body-inner{
+  padding:6px 28px 30px; display:grid; grid-template-columns:repeat(2,1fr); gap:22px;
+  border-top:1px solid var(--card-border); padding-top:24px; margin:0 28px;
+}
+@media(max-width:640px){ .project-body-inner{ grid-template-columns:1fr; } }
+.pd h4{ font-family:var(--font-display); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+.pd p{ color:var(--text-secondary); font-size:.87rem; }
+.tags{ display:flex; flex-wrap:wrap; gap:8px; }
+.tag{ font-family:var(--font-display); font-size:.7rem; color:var(--text-secondary); border:1px solid var(--card-border); border-radius:7px; padding:5px 11px; background:var(--bg-raised); }
+
+/* ============ MISREADINGS / POSTMORTEMS ============ */
+.pm-list{ margin-top:44px; }
+.pm-entry{
+  display:grid; grid-template-columns:64px 1fr; gap:20px; padding:24px 26px; margin-bottom:12px;
+  cursor:pointer;
+}
+.pm-id{ font-family:var(--font-display); font-size:.72rem; color:var(--rust); font-weight:600; }
+.pm-entry h3{ font-family:var(--font-display); font-size:1.03rem; font-weight:600; margin-bottom:0; transition:color .2s ease; }
+.pm-entry:hover h3, .pm-entry.open h3{ color:var(--accent); }
+.pm-detail{ max-height:0; overflow:hidden; opacity:0; transition:max-height .45s ease, opacity .45s ease, margin .45s ease; color:var(--text-secondary); font-size:.9rem; line-height:1.75; }
+.pm-entry.open .pm-detail{ max-height:220px; opacity:1; margin-top:12px; }
+@media(max-width:560px){ .pm-entry{ grid-template-columns:1fr; gap:6px; } }
+
+/* ============ DISCLOSURE ============ */
+.disclosure-block{ padding:32px 34px; margin-top:40px; }
+.disclosure-block p{ color:var(--text-secondary); max-width:64ch; margin-bottom:16px; }
+.disclosure-block p:last-child{ margin-bottom:0; }
+.disclosure-block strong{ color:var(--text-primary); }
+.disclosure-block p.foot{ font-size:.85rem; color:var(--text-faint); font-family:var(--font-display); }
+
+/* ============ NOTES ============ */
+.note{ display:block; padding:24px 26px; margin-bottom:12px; transition:transform .25s ease, border-color .25s ease; }
+.note:hover{ transform:translateX(5px); border-color:var(--accent); }
+.note-meta{ font-family:var(--font-display); font-size:.68rem; color:var(--text-faint); display:flex; gap:16px; flex-wrap:wrap; margin-bottom:9px; text-transform:uppercase; letter-spacing:.05em; }
+.note-meta .cat{ color:var(--accent); }
+.note h3{ font-family:var(--font-display); font-size:1.05rem; font-weight:600; margin-bottom:6px; }
+.note p{ color:var(--text-secondary); font-size:.88rem; max-width:640px; }
+
+/* ============ TOOLBOX ============ */
+.tool-group h3{ font-family:var(--font-display); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:16px; }
+.tool-group{ padding:26px; }
+.tool-note{ margin-top:30px; color:var(--text-faint); font-size:.83rem; font-family:var(--font-display); }
+
+/* ============ CHIPS ============ */
+.chips{ display:flex; flex-wrap:wrap; gap:12px; margin-top:40px; }
+.chip{ font-family:var(--font-display); font-size:.82rem; padding:11px 20px; border-radius:99px; border:1px solid var(--card-border); background:var(--card-bg); backdrop-filter:blur(10px); transition:border-color .25s ease, background .25s ease; }
+.chip:hover{ border-color:var(--accent); background:var(--accent-soft); }
+.chip::before{ content:"›"; color:var(--accent); margin-right:8px; }
+
+/* ============ LIBRARY / RESOURCES ============ */
+.res-list{ margin-top:40px; border-top:1px solid var(--card-border); }
+.res-item{ display:flex; justify-content:space-between; align-items:baseline; gap:20px; padding:20px 4px; border-bottom:1px solid var(--card-border); transition:padding-left .25s ease; }
+.res-item:hover{ padding-left:14px; color:var(--accent); }
+.res-item h3{ font-family:var(--font-display); font-size:.98rem; font-weight:500; }
+.res-item span{ font-family:var(--font-display); font-size:.72rem; color:var(--text-faint); text-align:right; flex-shrink:0; }
+
+/* ============ SIGNAL ============ */
+.signal-box{ padding:clamp(30px,5vw,50px); display:grid; grid-template-columns:auto 1fr; gap:clamp(24px,5vw,44px); align-items:center; margin-top:40px; }
+.signal-dot{ width:14px; height:14px; border-radius:50%; background:var(--accent); animation:sigpulse 2.6s ease-out infinite; }
+@keyframes sigpulse{ 0%{ box-shadow:0 0 0 0 var(--glow-color);} 70%{ box-shadow:0 0 0 16px rgba(0,0,0,0);} 100%{ box-shadow:0 0 0 0 rgba(0,0,0,0);} }
+.signal-box p{ font-size:clamp(1.05rem,2vw,1.35rem); max-width:56ch; }
+@media(max-width:640px){ .signal-box{ grid-template-columns:1fr; text-align:left; } }
+
+/* ============ CONTACT ============ */
+#transmit{ text-align:center; padding-bottom:100px; }
+#transmit .eyebrow, #transmit h2, #transmit .lead{ margin-left:auto; margin-right:auto; justify-content:center; }
+.status-badge{
+  display:inline-block; font-size:.7rem; font-weight:500; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--accent); margin-bottom:16px; background:var(--accent-soft); padding:5px 15px; border-radius:20px;
+  font-family:var(--font-display);
+}
+.divider-sm{ width:24px; height:1px; background:var(--accent); margin:26px auto; opacity:.5; }
+
+/* ---- Refined contact grid: email + socials as matching icon cards ---- */
+.contact-grid{
+  display:grid; grid-template-columns:repeat(4,minmax(0,150px)); gap:16px;
+  justify-content:center; margin:38px auto 0; max-width:700px;
+}
+.contact-card{
+  position:relative; padding:26px 16px 20px; display:flex; flex-direction:column; align-items:center; gap:12px;
+  overflow:hidden; isolation:isolate;
+}
+.contact-card::before{
+  content:""; position:absolute; inset:0; z-index:-1; opacity:0;
+  background:radial-gradient(120px 90px at 50% 0%, var(--glow-color), transparent 70%);
+  transition:opacity .35s ease;
+}
+.contact-card:hover::before{ opacity:1; }
+.contact-card:hover{ border-color:var(--accent); transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+.contact-card .cc-icon{
+  width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--accent-soft); color:var(--accent); font-size:1.05rem;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1), background .3s ease, color .3s ease;
+}
+.contact-card:hover .cc-icon{ transform:scale(1.12) rotate(-6deg); background:var(--accent); color:#fff; }
+[data-theme="dark"] .contact-card:hover .cc-icon{ color:#1A1A1A; }
+.contact-card .cc-label{ font-family:var(--font-display); font-size:.82rem; font-weight:500; }
+.contact-card .cc-sub{ font-family:var(--font-display); font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); }
+.contact-card.copied .cc-sub{ color:var(--ok); }
+@media(max-width:620px){
+  .contact-grid{ grid-template-columns:repeat(2,minmax(0,150px)); }
+}
+
+footer{ border-top:1px solid var(--card-border); padding:34px 24px; text-align:center; position:relative; z-index:1; }
+footer p{ font-family:var(--font-display); font-size:.72rem; color:var(--text-faint); }
+footer span{ color:var(--accent); font-weight:500; }
+
+/* ============ COMMAND PALETTE ============ */
+#palette-overlay{
+  position:fixed; inset:0; background:rgba(10,10,10,.45); backdrop-filter:blur(6px); z-index:300; display:none;
+  align-items:flex-start; justify-content:center; padding:14vh 20px 20px;
+}
+#palette-overlay.open{ display:flex; }
+#palette{ width:100%; max-width:560px; background:var(--card-solid); border:1px solid var(--card-border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-lg); }
+#palette-input{ width:100%; background:none; border:none; border-bottom:1px solid var(--card-border); color:var(--text-primary); font-family:var(--font-body); font-size:1rem; padding:18px 22px; outline:none; }
+#palette-input::placeholder{ color:var(--text-faint); }
+#palette-results{ max-height:340px; overflow-y:auto; padding:8px; }
+.pal-item{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; border-radius:9px; padding:12px 14px; }
+.pal-item .pal-type{ font-family:var(--font-display); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:5px; flex-shrink:0; }
+.pal-item .pal-sub{ color:var(--text-faint); font-size:.76rem; margin-left:auto; font-family:var(--font-display); }
+.pal-item.active, .pal-item:hover{ background:var(--accent-softer); }
+.pal-empty{ padding:24px; text-align:center; color:var(--text-faint); font-size:.88rem; }
+.pal-footer{ border-top:1px solid var(--card-border); padding:10px 18px; display:flex; gap:18px; font-family:var(--font-display); font-size:.64rem; color:var(--text-faint); }
+
+/* ============ REVEAL ============ */
+.reveal{ opacity:0; transform:translateY(26px); }
+.no-js .reveal{ opacity:1; transform:none; }
+.no-js #scene{ display:none; }
+
+@media(prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  .reveal{ opacity:1 !important; transform:none !important; }
+}
+</style>
 </head>
 <body data-theme="light">
 
-    <!-- Subtle texture overlay -->
-    <div class="bg-texture"></div>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="bg-texture" aria-hidden="true"></div>
+<div id="progress" role="presentation"></div>
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
 
-    <!-- Theme toggle -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
-        <i class="fa-solid fa-moon" id="themeIcon"></i>
-    </button>
-
-    <!-- Main content -->
-    <div class="container">
-        <!-- Minimal gear icon -->
-        <div class="gear-wrapper">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" fill="none"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" fill="none"/>
-            </svg>
-        </div>
-
-        <!-- Card with casual + tech‑aware copy -->
-        <div class="card">
-            <div class="status-text">Refactoring pixels, brb</div>
-            <h1>Tweaking dependencies & polishing the UI.</h1>
-            <p class="description">
-                Running a fresh build, optimizing some assets, and squashing a couple of bugs. The portfolio's getting a clean deploy — catch you in a bit.
-            </p>
-
-            <!-- Social links (unchanged) -->
-            <div class="social-links">
-                <a href="https://github.com/sivnsh7" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
-                    <i class="fa-brands fa-github"></i>
-                </a>
-                <a href="https://instagram.com/sivnsh7.in" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://twitter.com/sivnsh7" target="_blank" rel="noopener" class="social-link" aria-label="Twitter">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="mailto:sivnsh7@gmail.com" class="social-link" aria-label="Email">
-                    <i class="fa-solid fa-envelope"></i>
-                </a>
-            </div>
-
-            <div class="divider"></div>
-            <p class="footer">
-                &copy; <span id="currentYear"></span> All Rights Reserved — <span>sivnsh7.in</span>
-            </p>
-        </div>
+<nav id="mainNav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="#hero"><span class="dot"></span>sivnsh7</a>
+    <div class="nav-links">
+      <a href="#instruments">Instruments</a>
+      <a href="#projects">Projects</a>
+      <a href="#notes">Notes</a>
+      <a href="#toolbox">Toolbox</a>
+      <a href="#transmit">Transmit</a>
     </div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="paletteBtn" aria-label="Open command palette" title="Search (Ctrl/Cmd K)"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <button class="icon-btn" id="themeToggle" aria-label="Switch theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
 
-    <script>
-        (function() {
-            const html = document.documentElement;
-            const toggleBtn = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const yearSpan = document.getElementById('currentYear');
-            
-            yearSpan.textContent = new Date().getFullYear();
+<div class="mobile-nav" id="mobileNav">
+  <a href="#instruments" data-mnav>Instruments</a>
+  <a href="#survey" data-mnav>Survey</a>
+  <a href="#projects" data-mnav>Field Reports</a>
+  <a href="#misreadings" data-mnav>Misreadings</a>
+  <a href="#disclosure" data-mnav>Disclosure</a>
+  <a href="#notes" data-mnav>Notes</a>
+  <a href="#toolbox" data-mnav>Toolbox</a>
+  <a href="#transmit" data-mnav>Transmit</a>
+</div>
 
-            // Theme preference
-            const saved = localStorage.getItem('sivnsh7-theme-min') || 'light';
-            setTheme(saved);
+<main id="main">
 
-            toggleBtn.addEventListener('click', () => {
-                const current = html.getAttribute('data-theme');
-                const next = current === 'light' ? 'dark' : 'light';
-                setTheme(next);
-                localStorage.setItem('sivnsh7-theme-min', next);
-                // tiny feedback
-                toggleBtn.style.transform = 'scale(0.9)';
-                setTimeout(() => { toggleBtn.style.transform = ''; }, 150);
-            });
+  <!-- ================= HERO ================= -->
+  <header id="hero">
+    <div id="scene" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <span class="hero-status"><span class="pulse"></span>Currently active — extending ReconOS, moving off-phone</span>
+      <h1>Shivansh<br><span class="accent">(sivnsh7)</span></h1>
+      <p class="hero-sub">Self-taught security researcher and builder, working from a Samsung M35 in Termux.</p>
+      <p class="hero-support">Recon automation, Linux tooling, and responsible disclosure — documented in public rather than performed. I write down what breaks, not just what ships.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#projects">View Field Reports <i class="fa-solid fa-arrow-right" style="font-size:.75rem"></i></a>
+        <a class="btn btn-ghost" href="#notes">Read Notes</a>
+      </div>
+      <div class="hero-coords">
+        <span>Origin — Termux, Android</span>
+        <span>Field — Security / Recon / Automation</span>
+        <span>Base — Bhopal, India</span>
+      </div>
+    </div>
+    <div class="hero-fade"></div>
+  </header>
 
-            function setTheme(theme) {
-                html.setAttribute('data-theme', theme);
-                if (theme === 'dark') {
-                    themeIcon.className = 'fa-solid fa-sun';
-                } else {
-                    themeIcon.className = 'fa-solid fa-moon';
-                }
-            }
+  <!-- ================= INSTRUMENTS ================= -->
+  <section id="instruments">
+    <div class="wrap">
+      <p class="eyebrow reveal">How I work</p>
+      <h2 class="reveal">Instruments</h2>
+      <div class="instruments-grid">
+        <div class="instruments-copy reveal">
+          <p>Almost everything here started on a five-inch screen. Termux was the first real instrument — a full Linux shell folded into an Android phone, no proper keyboard, no patience for shortcuts.</p>
+          <p>That constraint turned into a method: build tools that work where the environment refuses to cooperate, then confirm they hold up everywhere else. A phone forces you to know which parts of a system are essential and which are decoration — there's no room to carry dead weight.</p>
+          <p>I'm self-taught, which mostly means I've broken more things than I was ever taught not to. It's a slow way to learn, but it's an honest one — every fix comes with a reason attached.</p>
+        </div>
+        <div class="card spec-card reveal">
+          <div class="spec-row"><span class="spec-label">Device</span><span class="spec-value">Samsung M35 · Termux</span></div>
+          <div class="spec-row"><span class="spec-label">Secondary</span><span class="spec-value">Kali Linux laptop</span></div>
+          <div class="spec-row"><span class="spec-label">Languages</span><span class="spec-value accent">Python · Bash · JavaScript</span></div>
+          <div class="spec-row"><span class="spec-label">Editor</span><span class="spec-value">Neovim, inside Termux</span></div>
+          <div class="spec-row"><span class="spec-label">Method</span><span class="spec-value">Write → break → document → fix</span></div>
+          <div class="spec-row"><span class="spec-label">Next</span><span class="spec-value accent">Moving workloads to VPS / cloud</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            console.log('%c sivnsh7.in %c• under maintenance',
-                'color: #9B8E7E; font-weight: 600;', 'color: #6B6B6B;');
-        })();
-    </script>
+  <!-- ================= SURVEY ================= -->
+  <section id="survey">
+    <div class="wrap">
+      <p class="eyebrow reveal">What I actually do</p>
+      <h2 class="reveal">Survey</h2>
+      <p class="lead reveal">Three terrains, one habit of mind: take a system apart slowly enough to understand why it holds together — or why it doesn't.</p>
+      <div class="grid3">
+        <div class="card terrain-card reveal">
+          <span class="tag-label">Domain 01</span>
+          <h3>Security Research</h3>
+          <p>Black-box assessments across educational and government-adjacent infrastructure. Reconnaissance first, exploitation only where scope allows, and a written report at the end — Confirmed, Probable, or Hypothesis, never blurred together.</p>
+        </div>
+        <div class="card terrain-card reveal">
+          <span class="tag-label">Domain 02</span>
+          <h3>Recon &amp; Automation</h3>
+          <p>Chaining subfinder, httpx, nuclei, katana, gau, waybackurls and ffuf into pipelines that survive a second run. ReconOS and ReconFTW are the two longest-running proofs of that work.</p>
+        </div>
+        <div class="card terrain-card reveal">
+          <span class="tag-label">Domain 03</span>
+          <h3>Red / Blue Practice</h3>
+          <p>Working both sides of the same fence — building detection logic, then trying to walk past it — and keeping notes on what each side missed about the other.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FIELD REPORTS / PROJECTS ================= -->
+  <section id="projects">
+    <div class="wrap">
+      <p class="eyebrow reveal">Things I've built</p>
+      <h2 class="reveal">Field Reports</h2>
+      <p class="lead reveal">Four projects that exist in different states — one shipping, one built around an established framework, one still a roadmap, and one that's about the ground everything else runs on.</p>
+
+      <div style="margin-top:46px">
+
+        <article class="card project reveal" data-search="ReconOS FastAPI recon orchestrator Termux rewrites">
+          <button class="project-head" aria-expanded="false">
+            <div class="project-head-text">
+              <h3>ReconOS <span class="status-pill active">Active</span></h3>
+              <p>A FastAPI recon-orchestration platform, now on roughly its eighth internal rewrite.</p>
+            </div>
+            <span class="chev" aria-hidden="true">+</span>
+          </button>
+          <div class="project-body"><div class="project-body-inner">
+            <div class="pd"><h4>Overview</h4><p>An orchestration layer meant to replace ReconFTW for my own workflow — a single service that runs recon tools, tracks their output, and stays legible on both Termux and Kali.</p></div>
+            <div class="pd"><h4>Why I built it</h4><p>Running tools by hand produced inconsistent, hard-to-compare results. I wanted one system, one log format, and one place to see what a scan actually found.</p></div>
+            <div class="pd"><h4>Stack</h4><div class="tags"><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">Termux</span><span class="tag">Kali</span></div></div>
+            <div class="pd"><h4>What it survived</h4><p>Termux installer breakage, a GOROOT path bug, a self-referencing plugin-discovery folder, and an async stdout/stderr deadlock — each one documented below in Misreadings.</p></div>
+          </div></div>
+        </article>
+
+        <article class="card project reveal" data-search="ReconFTW framework tool chain scan pipeline assessments">
+          <button class="project-head" aria-expanded="false">
+            <div class="project-head-text">
+              <h3>ReconFTW Framework <span class="status-pill active">Active</span></h3>
+              <p>The recon framework behind most of my black-box assessments, run and tuned in the field.</p>
+            </div>
+            <span class="chev" aria-hidden="true">+</span>
+          </button>
+          <div class="project-body"><div class="project-body-inner">
+            <div class="pd"><h4>Overview</h4><p>ReconFTW chains subdomain enumeration, HTTP probing, and vulnerability scanning into one pass. I run it as the first move on almost every assessment, then hand-verify anything it surfaces before it goes in a report.</p></div>
+            <div class="pd"><h4>Why I use it</h4><p>It's fast, well-maintained, and honest about what it finds versus what it guesses — which matters when every finding gets graded Confirmed, Probable, or Hypothesis afterward.</p></div>
+            <div class="pd"><h4>Stack</h4><div class="tags"><span class="tag">Bash</span><span class="tag">Subfinder</span><span class="tag">Httpx</span><span class="tag">Nuclei</span></div></div>
+            <div class="pd"><h4>How it's used</h4><p>Scan output becomes the raw material for structured disclosure reports — findings triaged, deduplicated, and rewritten in plain language before anything reaches an organization.</p></div>
+          </div></div>
+        </article>
+
+        <article class="card project reveal" data-search="Arch Linux migration VPS environment rig setup">
+          <button class="project-head" aria-expanded="false">
+            <div class="project-head-text">
+              <h3>Arch Linux Rig <span class="status-pill concept">In progress</span></h3>
+              <p>Migrating the daily workflow off a phone and onto a minimal, self-built Arch environment.</p>
+            </div>
+            <span class="chev" aria-hidden="true">+</span>
+          </button>
+          <div class="project-body"><div class="project-body-inner">
+            <div class="pd"><h4>Overview</h4><p>A from-scratch Arch Linux setup — built package by package rather than pulled from an installer image — meant to host ReconOS and the ReconFTW pipeline on real infrastructure instead of a Termux shell.</p></div>
+            <div class="pd"><h4>Why it's listed</h4><p>Termux got me this far, but it was never going to be the permanent home for long-running scans and persistent services. Arch is the deliberate, minimal alternative.</p></div>
+            <div class="pd"><h4>Status</h4><div class="tags"><span class="tag">VPS target</span><span class="tag">Systemd services</span><span class="tag">No GUI</span></div></div>
+            <div class="pd"><h4>Timeline</h4><p>Base install and package set are settled; service hardening and migration of existing tooling are ongoing.</p></div>
+          </div></div>
+        </article>
+
+        <article class="card project reveal" data-search="CERT-In disclosure reports coordinated vulnerability reporting">
+          <button class="project-head" aria-expanded="false">
+            <div class="project-head-text">
+              <h3>Disclosure Reports <span class="status-pill active">Active</span></h3>
+              <p>Structured, CERT-In-aligned write-ups for every assessment that produces a real finding.</p>
+            </div>
+            <span class="chev" aria-hidden="true">+</span>
+          </button>
+          <div class="project-body"><div class="project-body-inner">
+            <div class="pd"><h4>Overview</h4><p>A consistent report format — scope, method, reproduction, and grading — used across every coordinated disclosure I've sent, regardless of how the underlying scan was run.</p></div>
+            <div class="pd"><h4>Why it's here</h4><p>The tooling only matters if what it finds gets written up honestly and reaches the right people. This is the part that makes the recon work count as research rather than noise.</p></div>
+            <div class="pd"><h4>Focus</h4><div class="tags"><span class="tag">CERT-In format</span><span class="tag">Structured findings</span><span class="tag">Plain language</span></div></div>
+            <div class="pd"><h4>Status</h4><p>Ongoing — a report is drafted for every assessment that clears verification.</p></div>
+          </div></div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MISREADINGS ================= -->
+  <section id="misreadings">
+    <div class="wrap">
+      <p class="eyebrow reveal">Postmortems</p>
+      <h2 class="reveal">Misreadings</h2>
+      <p class="lead reveal">Every bug I've spent more than two hours on has taught me something I didn't know I didn't know. These are the ones that rewired my mental model.</p>
+
+      <div class="pm-list">
+        <div class="card pm-entry reveal" tabindex="0" role="button" aria-expanded="false">
+          <span class="pm-id">PM–01</span>
+          <div>
+            <h3>GOROOT path bug in the Termux installer</h3>
+            <div class="pm-detail">The installer assumed Go lived at <code>/usr/local/go</code>. On Termux it's <code>/data/data/com.termux/files/usr/lib/go</code>. I spent an hour blaming the script before checking the actual path. Now every build step probes <code>$GOROOT</code> first.</div>
+          </div>
+        </div>
+        <div class="card pm-entry reveal" tabindex="0" role="button" aria-expanded="false">
+          <span class="pm-id">PM–02</span>
+          <div>
+            <h3>A nested <code>tools/tools/</code> folder</h3>
+            <div class="pm-detail">ReconOS's plugin discovery walked <code>./tools</code> and found a git-submodule subfolder also named <code>tools</code> — and double-registered every plugin inside it. Fixed by canonicalizing paths and skipping any folder whose resolved path matches an already-loaded plugin's parent.</div>
+          </div>
+        </div>
+        <div class="card pm-entry reveal" tabindex="0" role="button" aria-expanded="false">
+          <span class="pm-id">PM–03</span>
+          <div>
+            <h3>An async stdout/stderr deadlock</h3>
+            <div class="pm-detail">The orchestrator spawned subprocesses and read <code>stdout</code> and <code>stderr</code> sequentially. Once a tool wrote past the pipe buffer on stderr, it blocked waiting for a reader that was still stuck on stdout. Fixed by reading both streams concurrently with <code>asyncio.gather()</code>.</div>
+          </div>
+        </div>
+        <div class="card pm-entry reveal" tabindex="0" role="button" aria-expanded="false">
+          <span class="pm-id">PM–04</span>
+          <div>
+            <h3>Believing the error message</h3>
+            <div class="pm-detail">The installer reported "permission denied" on a file that was world-readable. The real cause was a parent directory mounted with <code>noexec</code>. The error was technically true and completely misleading. Now I check mount options before trusting any permission message.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DISCLOSURE ================= -->
+  <section id="disclosure">
+    <div class="wrap">
+      <p class="eyebrow reveal">How I handle findings</p>
+      <h2 class="reveal">Disclosure Practice</h2>
+      <div class="card disclosure-block reveal">
+        <p><strong>Verify before you write.</strong> I don't report anything I can't reproduce cleanly. Every report includes a clear reproduction, the affected system, and no speculation about impact I can't prove — findings are graded Confirmed, Probable, or Hypothesis, and the grade stays honest even when it's less impressive.</p>
+        <p>I document conservatively — what I observed, not what I suspect — and I wait on organizational timelines rather than mine. Disclosure is a conversation, not a deadline. I've reported across education, government-adjacent, and public infrastructure, and I don't name targets here.</p>
+        <p class="foot">— this is the ethic that separates research from noise.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NOTES ================= -->
+  <section id="notes">
+    <div class="wrap">
+      <p class="eyebrow reveal">Written to remember</p>
+      <h2 class="reveal">Notes</h2>
+      <p class="lead reveal">Short, specific notes written to clarify my own thinking. Each one is a single idea, not a book.</p>
+
+      <div id="notesList" style="margin-top:44px">
+        <a class="card note reveal" href="#notes" data-search="DNS recursive authoritative resolvers subdomain enumeration">
+          <div class="note-meta"><span class="cat">Networking</span><span>DNS</span></div>
+          <h3>Recursive vs. authoritative resolution</h3>
+          <p>How resolvers actually work, and why the distinction matters the moment you're enumerating subdomains at scale.</p>
+        </a>
+        <a class="card note reveal" href="#notes" data-search="HTTP status codes terrain infrastructure protocol">
+          <div class="note-meta"><span class="cat">Web</span><span>HTTP</span></div>
+          <h3>Status codes as terrain</h3>
+          <p>What 200, 403, 500, and 302 actually tell you about the infrastructure sitting behind them — read as protocol, not abstraction.</p>
+        </a>
+        <a class="card note reveal" href="#notes" data-search="Linux filesystem permissions inodes procfs recon basics">
+          <div class="note-meta"><span class="cat">Linux</span><span>Filesystem</span></div>
+          <h3>Filesystem basics for recon</h3>
+          <p>Permissions, inodes, procfs, and why <code>/dev/null</code> is the most reliable tool in any pipeline you'll ever write.</p>
+        </a>
+        <a class="card note reveal" href="#notes" data-search="Bash pipelines exit codes logging idempotency">
+          <div class="note-meta"><span class="cat">Automation</span><span>Bash</span></div>
+          <h3>Pipelines that survive a third run</h3>
+          <p>Exit codes, logging, and idempotency — the discipline that turns a script into something you can actually trust.</p>
+        </a>
+        <a class="card note reveal" href="#notes" data-search="responsible disclosure ethics verification patience CERT-In">
+          <div class="note-meta"><span class="cat">Ethics</span><span>Disclosure</span></div>
+          <h3>Responsible disclosure, in practice</h3>
+          <p>Verification, documentation, and patience — and the difference between a finding and a leak, which is smaller than people think.</p>
+        </a>
+        <a class="card note reveal" href="#notes" data-search="recon methodology asset discovery scope enumeration validation">
+          <div class="note-meta"><span class="cat">Methodology</span><span>Recon</span></div>
+          <h3>A repeatable recon methodology</h3>
+          <p>Defining scope, enumerating, validating, and organizing findings so nothing quietly gets lost between tools.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TOOLBOX ================= -->
+  <section id="toolbox">
+    <div class="wrap">
+      <p class="eyebrow reveal">Daily drivers</p>
+      <h2 class="reveal">Toolbox</h2>
+      <div class="grid2">
+        <div class="card tool-group reveal">
+          <h3>Recon</h3>
+          <div class="tags"><span class="tag">ReconFTW</span><span class="tag">Subfinder</span><span class="tag">Httpx</span><span class="tag">Nuclei</span><span class="tag">Katana</span><span class="tag">Gau</span><span class="tag">Waybackurls</span><span class="tag">Ffuf</span></div>
+        </div>
+        <div class="card tool-group reveal">
+          <h3>Terminal</h3>
+          <div class="tags"><span class="tag">Termux</span><span class="tag">Neovim</span><span class="tag">tmux</span><span class="tag">jq</span><span class="tag">ripgrep</span></div>
+        </div>
+        <div class="card tool-group reveal">
+          <h3>Languages</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Bash</span><span class="tag">JavaScript</span></div>
+        </div>
+        <div class="card tool-group reveal">
+          <h3>Infrastructure</h3>
+          <div class="tags"><span class="tag">GitHub Pages</span><span class="tag">Cloudflare</span><span class="tag">Kali Linux</span><span class="tag">Arch Linux</span><span class="tag">VPS (in progress)</span></div>
+        </div>
+      </div>
+      <p class="tool-note reveal">// listed honestly — familiarity, not mastery.</p>
+    </div>
+  </section>
+
+  <!-- ================= EXPLORING ================= -->
+  <section id="exploring">
+    <div class="wrap">
+      <p class="eyebrow reveal">In progress</p>
+      <h2 class="reveal">Currently exploring</h2>
+      <div class="chips">
+        <span class="chip reveal">Arch Linux migration</span>
+        <span class="chip reveal">Async pipeline design</span>
+        <span class="chip reveal">Cross-distro tooling</span>
+        <span class="chip reveal">Detection-side thinking</span>
+        <span class="chip reveal">Formal report writing</span>
+        <span class="chip reveal">Technical documentation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIBRARY ================= -->
+  <section id="library">
+    <div class="wrap">
+      <p class="eyebrow reveal">Influences</p>
+      <h2 class="reveal">Reference Library</h2>
+      <p class="lead reveal">Not everything I've read — just the sources I keep coming back to.</p>
+      <div class="res-list">
+        <div class="res-item reveal"><h3>The Linux Command Line</h3><span>William Shotts</span></div>
+        <div class="res-item reveal"><h3>PortSwigger Research</h3><span>Web security</span></div>
+        <div class="res-item reveal"><h3>DNS &amp; BIND, 5th ed.</h3><span>O'Reilly</span></div>
+        <div class="res-item reveal"><h3>RFCs — 1035, 2616, 7230</h3><span>IETF</span></div>
+        <div class="res-item reveal"><h3>Bash, man pages, GNU coreutils</h3><span>Primary sources</span></div>
+        <div class="res-item reveal"><h3>ProjectDiscovery / nuclei templates</h3><span>Open source</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SIGNAL ================= -->
+  <section id="signal">
+    <div class="wrap">
+      <p class="eyebrow reveal">Right now</p>
+      <h2 class="reveal">Current Signal</h2>
+      <div class="card signal-box reveal">
+        <div class="signal-dot" aria-hidden="true"></div>
+        <p>Extending ReconOS against its own spec instead of rewriting it again, and moving off a single Android device onto an Arch Linux environment that doesn't double as a phone. Every assumption about paths, permissions, and process management is getting checked on the way.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TRANSMIT ================= -->
+  <section id="transmit">
+    <div class="wrap">
+      <p class="eyebrow reveal">Get in touch</p>
+      <h2 class="reveal">Transmit</h2>
+      <span class="status-badge reveal">open to conversation</span>
+      <p class="lead reveal" style="margin:0 auto 8px;">Open to conversations about recon automation, disclosure workflows, or debugging Bash at 2am.</p>
+
+      <div class="contact-grid reveal" role="list" aria-label="Contact options">
+        <a class="card contact-card" href="mailto:sivnsh7@gmail.com" role="listitem" aria-label="Email sivnsh7@gmail.com">
+          <span class="cc-icon"><i class="fa-solid fa-envelope"></i></span>
+          <span class="cc-label">Email</span>
+          <span class="cc-sub">Say hello</span>
+        </a>
+        <a class="card contact-card" href="https://github.com/sivnsh7" target="_blank" rel="noopener" role="listitem" aria-label="GitHub, sivnsh7">
+          <span class="cc-icon"><i class="fa-brands fa-github"></i></span>
+          <span class="cc-label">GitHub</span>
+          <span class="cc-sub">Code &amp; tools</span>
+        </a>
+        <a class="card contact-card" href="https://instagram.com/sivnsh7.in" target="_blank" rel="noopener" role="listitem" aria-label="Instagram, sivnsh7.in">
+          <span class="cc-icon"><i class="fa-brands fa-instagram"></i></span>
+          <span class="cc-label">Instagram</span>
+          <span class="cc-sub">Behind the scenes</span>
+        </a>
+        <a class="card contact-card" href="https://x.com/sivnsh7" target="_blank" rel="noopener" role="listitem" aria-label="X, sivnsh7">
+          <span class="cc-icon"><i class="fa-brands fa-x-twitter"></i></span>
+          <span class="cc-label">X</span>
+          <span class="cc-sub">Field notes</span>
+        </a>
+      </div>
+
+      <div class="divider-sm"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; <span id="currentYear"></span> Shivansh — <span>sivnsh7.in</span> — built from a phone, shipped from a browser.</p>
+</footer>
+
+<!-- ================= COMMAND PALETTE ================= -->
+<div id="palette-overlay" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div id="palette">
+    <input id="palette-input" type="text" placeholder="Search projects, notes, sections…" aria-label="Search" autocomplete="off">
+    <div id="palette-results" role="listbox"></div>
+    <div class="pal-footer"><span>↑↓ navigate</span><span>↵ open</span><span>esc close</span></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+(function(){
+"use strict";
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var html = document.documentElement;
+
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+/* ---------- THEME ---------- */
+var themeToggle = document.getElementById('themeToggle');
+var themeIcon = document.getElementById('themeIcon');
+function applyIcon(){
+  var t = html.getAttribute('data-theme');
+  themeIcon.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+applyIcon();
+themeToggle.addEventListener('click', function(){
+  var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  try{ localStorage.setItem('sivnsh7-theme', next); }catch(e){}
+  applyIcon();
+  if(window.sceneRecolor) window.sceneRecolor();
+});
+
+/* ---------- NAV: hide on scroll down, mobile menu ---------- */
+var nav = document.getElementById('mainNav');
+var lastY = 0;
+window.addEventListener('scroll', function(){
+  var y = window.scrollY;
+  if(y > lastY && y > 140) nav.classList.add('hide'); else nav.classList.remove('hide');
+  lastY = y;
+  var bar = document.getElementById('progress');
+  var h = document.documentElement;
+  var p = h.scrollTop/(h.scrollHeight - h.clientHeight);
+  bar.style.width = (p*100)+'%';
+},{passive:true});
+
+var navToggle = document.getElementById('navToggle');
+var mobileNav = document.getElementById('mobileNav');
+navToggle.addEventListener('click', function(){
+  var open = mobileNav.classList.toggle('open');
+  navToggle.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+document.querySelectorAll('[data-mnav]').forEach(function(a){
+  a.addEventListener('click', function(){
+    mobileNav.classList.remove('open'); navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded','false'); document.body.style.overflow='';
+  });
+});
+
+/* ---------- THREE.JS: ambient network scene ---------- */
+var sceneRecolorFn = null;
+(function(){
+  if(typeof THREE === 'undefined') return;
+  var container = document.getElementById('scene');
+  if(!container) return;
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(58, container.clientWidth/container.clientHeight, .1, 100);
+  camera.position.z = 7.5;
+  var renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  }catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+
+  var group = new THREE.Group();
+  scene.add(group);
+
+  var COUNT = 170, R = 2.7, positions = [];
+  for(var i=0;i<COUNT;i++){
+    var phi = Math.acos(1 - 2*(i+.5)/COUNT);
+    var theta = Math.PI*(1+Math.sqrt(5))*i;
+    positions.push(new THREE.Vector3(
+      R*Math.cos(theta)*Math.sin(phi),
+      R*Math.sin(theta)*Math.sin(phi),
+      R*Math.cos(phi)
+    ));
+  }
+  var ptsGeo = new THREE.BufferGeometry().setFromPoints(positions);
+  var ptsMat = new THREE.PointsMaterial({ color:0x9B8E7E, size:.04, transparent:true, opacity:.9, sizeAttenuation:true });
+  var pts = new THREE.Points(ptsGeo, ptsMat);
+  group.add(pts);
+
+  var linePos = [];
+  for(var a=0;a<COUNT;a++){
+    for(var b=a+1;b<COUNT;b++){
+      if(positions[a].distanceTo(positions[b]) < .88){
+        linePos.push(positions[a].x,positions[a].y,positions[a].z, positions[b].x,positions[b].y,positions[b].z);
+      }
+    }
+  }
+  var lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos,3));
+  var lineMat = new THREE.LineBasicMaterial({ color:0x9B8E7E, transparent:true, opacity:.1 });
+  group.add(new THREE.LineSegments(lineGeo, lineMat));
+
+  var coreMat = new THREE.MeshBasicMaterial({ color:0xffffff, wireframe:true, transparent:true, opacity:.045 });
+  group.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.45,1), coreMat));
+
+  group.position.x = 1.5;
+
+  sceneRecolorFn = function(){
+    var dark = html.getAttribute('data-theme') === 'dark';
+    var c = dark ? 0xC9B99A : 0x9B8E7E;
+    ptsMat.color.setHex(c);
+    lineMat.color.setHex(c);
+  };
+  sceneRecolorFn();
+
+  var mx=0,my=0;
+  document.addEventListener('pointermove', function(e){
+    mx=(e.clientX/window.innerWidth - .5);
+    my=(e.clientY/window.innerHeight - .5);
+  },{passive:true});
+
+  var clock = new THREE.Clock();
+  function tick(){
+    requestAnimationFrame(tick);
+    var t = clock.getElapsedTime();
+    if(!reduced){
+      group.rotation.y = t*.08 + mx*.3;
+      group.rotation.x = Math.sin(t*.15)*.1 + my*.2;
+    }
+    renderer.render(scene,camera);
+  }
+  tick();
+
+  window.addEventListener('resize', function(){
+    camera.aspect = container.clientWidth/container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+})();
+window.sceneRecolor = sceneRecolorFn;
+
+/* ---------- GSAP reveals ---------- */
+if(window.gsap && window.ScrollTrigger && !reduced){
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.reveal').forEach(function(el){
+    gsap.to(el, { opacity:1, y:0, duration:.9, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 88%', once:true } });
+  });
+  gsap.utils.toArray('.contact-grid .contact-card').forEach(function(card, i){
+    gsap.from(card, { opacity:0, y:18, duration:.6, delay:i*.06, ease:'power3.out',
+      scrollTrigger:{ trigger:'.contact-grid', start:'top 90%', once:true } });
+  });
+} else {
+  document.querySelectorAll('.reveal').forEach(function(el){ el.style.opacity=1; el.style.transform='none'; });
+}
+
+/* ---------- Custom cursor (fine pointers only) ---------- */
+if(window.matchMedia('(pointer:fine)').matches && !reduced){
+  var cur = document.getElementById('cursor'), ring = document.getElementById('cursor-ring');
+  var cx=0,cy=0,rx=0,ry=0,shown=false;
+  document.addEventListener('pointermove', function(e){
+    cx=e.clientX; cy=e.clientY;
+    if(!shown){ shown=true; document.body.classList.add('cursor-on'); cur.style.opacity=1; ring.style.opacity=1; }
+    cur.style.left=cx+'px'; cur.style.top=cy+'px';
+  },{passive:true});
+  (function follow(){
+    rx+=(cx-rx)*.16; ry+=(cy-ry)*.16;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(follow);
+  })();
+  document.addEventListener('pointerover', function(e){
+    var on = e.target.closest('a,button,.chip,.project-head,.pm-entry');
+    cur.classList.toggle('hover', !!on);
+    ring.classList.toggle('hover', !!on);
+  },{passive:true});
+}
+
+/* ---------- Project accordion ---------- */
+document.querySelectorAll('.project-head').forEach(function(head){
+  head.addEventListener('click', function(){
+    var proj = head.closest('.project'), body = proj.querySelector('.project-body');
+    var open = proj.classList.toggle('open');
+    head.setAttribute('aria-expanded', open);
+    body.style.maxHeight = open ? body.scrollHeight+'px' : '0';
+  });
+});
+
+/* ---------- Postmortem toggle (click + keyboard) ---------- */
+document.querySelectorAll('.pm-entry').forEach(function(entry){
+  function toggle(){
+    var open = entry.classList.toggle('open');
+    entry.setAttribute('aria-expanded', open);
+  }
+  entry.addEventListener('click', toggle);
+  entry.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+  });
+});
+
+/* ---------- Email card: copy address on click, keep mailto as fallback ---------- */
+(function(){
+  var emailCard = document.querySelector('.contact-card[href^="mailto:"]');
+  if(!emailCard) return;
+  var sub = emailCard.querySelector('.cc-sub');
+  var originalSub = sub.textContent;
+  emailCard.addEventListener('click', function(e){
+    if(navigator.clipboard){
+      e.preventDefault();
+      navigator.clipboard.writeText('sivnsh7@gmail.com').then(function(){
+        emailCard.classList.add('copied');
+        sub.textContent = 'Copied!';
+        setTimeout(function(){
+          emailCard.classList.remove('copied');
+          sub.textContent = originalSub;
+        }, 1800);
+      }).catch(function(){
+        window.location.href = 'mailto:sivnsh7@gmail.com';
+      });
+    }
+  });
+})();
+
+/* ---------- Command palette ---------- */
+var overlay = document.getElementById('palette-overlay');
+var input = document.getElementById('palette-input');
+var resultsEl = document.getElementById('palette-results');
+var activeIdx = 0, lastFocus = null;
+
+var index = [
+  {type:'Section',title:'Instruments',sub:'how I work',href:'#instruments'},
+  {type:'Section',title:'Survey',sub:'what I do',href:'#survey'},
+  {type:'Section',title:'Field Reports',sub:'projects',href:'#projects'},
+  {type:'Section',title:'Misreadings',sub:'postmortems',href:'#misreadings'},
+  {type:'Section',title:'Disclosure Practice',sub:'ethics',href:'#disclosure'},
+  {type:'Section',title:'Notes',sub:'knowledge library',href:'#notes'},
+  {type:'Section',title:'Toolbox',sub:'daily drivers',href:'#toolbox'},
+  {type:'Section',title:'Current Signal',sub:'right now',href:'#signal'},
+  {type:'Section',title:'Transmit',sub:'contact',href:'#transmit'}
+];
+document.querySelectorAll('.project').forEach(function(p){
+  index.push({type:'Project', title:p.querySelector('h3').childNodes[0].textContent.trim(), sub:'field report', href:'#projects', keywords:p.dataset.search||'', el:p});
+});
+document.querySelectorAll('#notesList .note').forEach(function(n){
+  index.push({type:'Note', title:n.querySelector('h3').textContent, sub:n.querySelector('.note-meta .cat').textContent, href:'#notes', keywords:n.dataset.search||''});
+});
+
+function openPalette(){
+  lastFocus = document.activeElement;
+  overlay.classList.add('open');
+  input.value=''; render('');
+  input.focus();
+}
+function closePalette(){
+  overlay.classList.remove('open');
+  if(lastFocus) lastFocus.focus();
+}
+function render(q){
+  q=q.trim().toLowerCase();
+  var matches = index.filter(function(item){
+    if(!q) return true;
+    return (item.title+' '+(item.keywords||'')+' '+item.type).toLowerCase().indexOf(q) > -1;
+  });
+  activeIdx = 0;
+  if(!matches.length){ resultsEl.innerHTML = '<div class="pal-empty">No results found.</div>'; return; }
+  resultsEl.innerHTML = '';
+  matches.forEach(function(item,i){
+    var b = document.createElement('button');
+    b.className = 'pal-item'+(i===0?' active':'');
+    b.setAttribute('role','option');
+    b.innerHTML = '<span class="pal-type">'+item.type+'</span><span>'+item.title+'</span><span class="pal-sub">'+item.sub+'</span>';
+    b.addEventListener('click', function(){ go(item); });
+    resultsEl.appendChild(b);
+  });
+  resultsEl._matches = matches;
+}
+function go(item){
+  closePalette();
+  var target = document.querySelector(item.href);
+  if(target) target.scrollIntoView({behavior: reduced ? 'auto' : 'smooth'});
+  if(item.el && !item.el.classList.contains('open')){
+    setTimeout(function(){ item.el.querySelector('.project-head').click(); }, 450);
+  }
+}
+function setActive(i){
+  var items = resultsEl.querySelectorAll('.pal-item');
+  if(!items.length) return;
+  activeIdx = (i+items.length)%items.length;
+  items.forEach(function(el,j){ el.classList.toggle('active', j===activeIdx); });
+  items[activeIdx].scrollIntoView({block:'nearest'});
+}
+input.addEventListener('input', function(){ render(input.value); });
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); overlay.classList.contains('open') ? closePalette() : openPalette(); return; }
+  if(!overlay.classList.contains('open')) return;
+  if(e.key==='Escape'){ closePalette(); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); setActive(activeIdx+1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); setActive(activeIdx-1); }
+  else if(e.key==='Enter'){ var m=resultsEl._matches; if(m && m[activeIdx]) go(m[activeIdx]); }
+});
+overlay.addEventListener('click', function(e){ if(e.target===overlay) closePalette(); });
+document.getElementById('paletteBtn').addEventListener('click', openPalette);
+
+/* ---------- Smooth anchor scroll (Safari fallback safety) ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var href = a.getAttribute('href');
+    if(href === '#' || href.length < 2) return;
+    var target = document.querySelector(href);
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior: reduced?'auto':'smooth'}); }
+  });
+});
+
+})();
+</script>
 </body>
 </html>
