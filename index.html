@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shivansh — Security Research, Recon & Automation | sivnsh7</title>
-<meta name="description" content="Shivansh (sivnsh7) — self-taught security researcher and builder. Recon automation, Linux tooling, and responsible disclosure, documented in public. Built from Termux on a Samsung M35.">
+<meta name="description" content="Shivansh (sivnsh7) — self-taught security researcher and builder. Recon automation, Linux tooling, and responsible disclosure, documented in public. Built from Termux on Android.">
 <meta property="og:title" content="Shivansh — Security Research, Recon & Automation">
 <meta property="og:description" content="Self-taught security researcher and builder. Recon automation, Linux tooling, and responsible disclosure — documented in public.">
 <meta property="og:type" content="website">
@@ -465,9 +465,9 @@ footer span{ color:var(--accent); font-weight:500; }
   <header id="hero">
     <div id="scene" aria-hidden="true"></div>
     <div class="wrap hero-inner">
-      <span class="hero-status"><span class="pulse"></span>Currently active — extending ReconOS, moving off-phone</span>
+      <span class="hero-status"><span class="pulse"></span>Currently active — sharpening vulnerability &amp; networking fundamentals, moving off-phone</span>
       <h1>Shivansh<br><span class="accent">(sivnsh7)</span></h1>
-      <p class="hero-sub">Self-taught security researcher and builder, working from a Samsung M35 in Termux.</p>
+      <p class="hero-sub">Self-taught security researcher and builder, working from an Android device in Termux.</p>
       <p class="hero-support">Recon automation, Linux tooling, and responsible disclosure — documented in public rather than performed. I write down what breaks, not just what ships.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#projects">View Field Reports <i class="fa-solid fa-arrow-right" style="font-size:.75rem"></i></a>
@@ -476,7 +476,7 @@ footer span{ color:var(--accent); font-weight:500; }
       <div class="hero-coords">
         <span>Origin — Termux, Android</span>
         <span>Field — Security / Recon / Automation</span>
-        <span>Base — Bhopal, India</span>
+        <span>Base — India</span>
       </div>
     </div>
     <div class="hero-fade"></div>
@@ -494,8 +494,8 @@ footer span{ color:var(--accent); font-weight:500; }
           <p>I'm self-taught, which mostly means I've broken more things than I was ever taught not to. It's a slow way to learn, but it's an honest one — every fix comes with a reason attached.</p>
         </div>
         <div class="card spec-card reveal">
-          <div class="spec-row"><span class="spec-label">Device</span><span class="spec-value">Samsung M35 · Termux</span></div>
-          <div class="spec-row"><span class="spec-label">Secondary</span><span class="spec-value">Kali Linux laptop</span></div>
+          <div class="spec-row"><span class="spec-label">Device</span><span class="spec-value">Android · Termux</span></div>
+          <div class="spec-row"><span class="spec-label">Secondary</span><span class="spec-value">Arch Linux · KDE Plasma</span></div>
           <div class="spec-row"><span class="spec-label">Languages</span><span class="spec-value accent">Python · Bash · JavaScript</span></div>
           <div class="spec-row"><span class="spec-label">Editor</span><span class="spec-value">Neovim, inside Termux</span></div>
           <div class="spec-row"><span class="spec-label">Method</span><span class="spec-value">Write → break → document → fix</span></div>
@@ -520,7 +520,7 @@ footer span{ color:var(--accent); font-weight:500; }
         <div class="card terrain-card reveal">
           <span class="tag-label">Domain 02</span>
           <h3>Recon &amp; Automation</h3>
-          <p>Chaining subfinder, httpx, nuclei, katana, gau, waybackurls and ffuf into pipelines that survive a second run. ReconOS and ReconFTW are the two longest-running proofs of that work.</p>
+          <p>Chaining subfinder, httpx, nuclei, katana, gau, waybackurls and ffuf into pipelines that survive a second run. ReconFTW is the longest-running proof of that work.</p>
         </div>
         <div class="card terrain-card reveal">
           <span class="tag-label">Domain 03</span>
@@ -540,19 +540,19 @@ footer span{ color:var(--accent); font-weight:500; }
 
       <div style="margin-top:46px">
 
-        <article class="card project reveal" data-search="ReconOS FastAPI recon orchestrator Termux rewrites">
+        <article class="card project reveal" data-search="vulnerability assessment networking fundamentals web pentesting OWASP Burp">
           <button class="project-head" aria-expanded="false">
             <div class="project-head-text">
-              <h3>ReconOS <span class="status-pill active">Active</span></h3>
-              <p>A FastAPI recon-orchestration platform, now on roughly its eighth internal rewrite.</p>
+              <h3>Vulnerability &amp; Network Fundamentals <span class="status-pill active">Active</span></h3>
+              <p>Working the fundamentals — TCP/IP, the OWASP Top 10, and web-app attack surface — until they're reflexive.</p>
             </div>
             <span class="chev" aria-hidden="true">+</span>
           </button>
           <div class="project-body"><div class="project-body-inner">
-            <div class="pd"><h4>Overview</h4><p>An orchestration layer meant to replace ReconFTW for my own workflow — a single service that runs recon tools, tracks their output, and stays legible on both Termux and Kali.</p></div>
-            <div class="pd"><h4>Why I built it</h4><p>Running tools by hand produced inconsistent, hard-to-compare results. I wanted one system, one log format, and one place to see what a scan actually found.</p></div>
-            <div class="pd"><h4>Stack</h4><div class="tags"><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">Termux</span><span class="tag">Kali</span></div></div>
-            <div class="pd"><h4>What it survived</h4><p>Termux installer breakage, a GOROOT path bug, a self-referencing plugin-discovery folder, and an async stdout/stderr deadlock — each one documented below in Misreadings.</p></div>
+            <div class="pd"><h4>Overview</h4><p>An ongoing practice of going back to fundamentals — subnetting, the OSI and TCP/IP models, request/response mechanics — and mapping each vulnerability class I find in the field back to the networking concept underneath it.</p></div>
+            <div class="pd"><h4>Why it matters</h4><p>Tools tell you something is wrong; fundamentals tell you why. I'd rather be able to explain a finding from first principles than just cite a scanner's output.</p></div>
+            <div class="pd"><h4>Web pentesting toolset</h4><div class="tags"><span class="tag">Burp Suite</span><span class="tag">OWASP ZAP</span><span class="tag">sqlmap</span><span class="tag">Nikto</span><span class="tag">OWASP Top 10</span></div></div>
+            <div class="pd"><h4>How it's used</h4><p>Every manual test against a target — auth flows, IDOR checks, injection points — gets verified against this base layer before it's written up as a finding.</p></div>
           </div></div>
         </article>
 
@@ -581,7 +581,7 @@ footer span{ color:var(--accent); font-weight:500; }
             <span class="chev" aria-hidden="true">+</span>
           </button>
           <div class="project-body"><div class="project-body-inner">
-            <div class="pd"><h4>Overview</h4><p>A from-scratch Arch Linux setup — built package by package rather than pulled from an installer image — meant to host ReconOS and the ReconFTW pipeline on real infrastructure instead of a Termux shell.</p></div>
+            <div class="pd"><h4>Overview</h4><p>A from-scratch Arch Linux setup — built package by package rather than pulled from an installer image — meant to host the ReconFTW pipeline and web-pentesting toolset on real infrastructure instead of a Termux shell.</p></div>
             <div class="pd"><h4>Why it's listed</h4><p>Termux got me this far, but it was never going to be the permanent home for long-running scans and persistent services. Arch is the deliberate, minimal alternative.</p></div>
             <div class="pd"><h4>Status</h4><div class="tags"><span class="tag">VPS target</span><span class="tag">Systemd services</span><span class="tag">No GUI</span></div></div>
             <div class="pd"><h4>Timeline</h4><p>Base install and package set are settled; service hardening and migration of existing tooling are ongoing.</p></div>
@@ -627,7 +627,7 @@ footer span{ color:var(--accent); font-weight:500; }
           <span class="pm-id">PM–02</span>
           <div>
             <h3>A nested <code>tools/tools/</code> folder</h3>
-            <div class="pm-detail">ReconOS's plugin discovery walked <code>./tools</code> and found a git-submodule subfolder also named <code>tools</code> — and double-registered every plugin inside it. Fixed by canonicalizing paths and skipping any folder whose resolved path matches an already-loaded plugin's parent.</div>
+            <div class="pm-detail">A recon orchestrator's plugin discovery walked <code>./tools</code> and found a git-submodule subfolder also named <code>tools</code> — and double-registered every plugin inside it. Fixed by canonicalizing paths and skipping any folder whose resolved path matches an already-loaded plugin's parent.</div>
           </div>
         </div>
         <div class="card pm-entry reveal" tabindex="0" role="button" aria-expanded="false">
@@ -714,6 +714,10 @@ footer span{ color:var(--accent); font-weight:500; }
           <div class="tags"><span class="tag">ReconFTW</span><span class="tag">Subfinder</span><span class="tag">Httpx</span><span class="tag">Nuclei</span><span class="tag">Katana</span><span class="tag">Gau</span><span class="tag">Waybackurls</span><span class="tag">Ffuf</span></div>
         </div>
         <div class="card tool-group reveal">
+          <h3>Web Pentesting</h3>
+          <div class="tags"><span class="tag">Burp Suite</span><span class="tag">OWASP ZAP</span><span class="tag">sqlmap</span><span class="tag">Nikto</span><span class="tag">Wpscan</span></div>
+        </div>
+        <div class="card tool-group reveal">
           <h3>Terminal</h3>
           <div class="tags"><span class="tag">Termux</span><span class="tag">Neovim</span><span class="tag">tmux</span><span class="tag">jq</span><span class="tag">ripgrep</span></div>
         </div>
@@ -723,7 +727,7 @@ footer span{ color:var(--accent); font-weight:500; }
         </div>
         <div class="card tool-group reveal">
           <h3>Infrastructure</h3>
-          <div class="tags"><span class="tag">GitHub Pages</span><span class="tag">Cloudflare</span><span class="tag">Kali Linux</span><span class="tag">Arch Linux</span><span class="tag">VPS (in progress)</span></div>
+          <div class="tags"><span class="tag">GitHub Pages</span><span class="tag">Cloudflare</span><span class="tag">Arch Linux</span><span class="tag">VPS (in progress)</span></div>
         </div>
       </div>
       <p class="tool-note reveal">// listed honestly — familiarity, not mastery.</p>
@@ -770,7 +774,7 @@ footer span{ color:var(--accent); font-weight:500; }
       <h2 class="reveal">Current Signal</h2>
       <div class="card signal-box reveal">
         <div class="signal-dot" aria-hidden="true"></div>
-        <p>Extending ReconOS against its own spec instead of rewriting it again, and moving off a single Android device onto an Arch Linux environment that doesn't double as a phone. Every assumption about paths, permissions, and process management is getting checked on the way.</p>
+        <p>Working vulnerability classes back to their networking fundamentals instead of just citing scanner output, and moving off a single Android device onto an Arch Linux environment that doesn't double as a phone. Every assumption about paths, permissions, and process management is getting checked on the way.</p>
       </div>
     </div>
   </section>
